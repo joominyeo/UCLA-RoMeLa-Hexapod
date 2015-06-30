@@ -56,7 +56,7 @@ void setupIK(){
   endpoints[LEFT_REAR].y = -118;
   endpoints[LEFT_REAR].z = 97;
 
-  liftHeight = 35;
+  liftHeight = 45;
   stepsInCycle = 1;
   step = 0;
 }
