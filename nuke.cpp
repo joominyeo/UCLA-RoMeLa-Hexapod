@@ -277,5 +277,5 @@ void doIK(){
         Serial.print("LM_TIBIA FAIL: ");
         Serial.println(servo);
     }
-    step = (step+1)%stepsInCycle;
+    step = (step+1)%stepsInCycle; //Increases step by one until it reaches the value of stepsInCycle, then resets to 0
 }
