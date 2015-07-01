@@ -100,18 +100,18 @@ ik_sol_t legIK(int X, int Y, int Z){
     long im = sqrt(sq((long)trueX)+sq((long)Z));    // length of imaginary leg
 
     // get femur angle above horizon...
-    float q1 = -atan2(Z,trueX);
-    long d1 = sq(L_FEMUR)-sq(L_TIBIA)+sq(im);
-    long d2 = 2*L_FEMUR*im;
-    float q2 = acos((float)d1/(float)d2);
-    ans.femur = radToServo(q1+q2);
+    float q1 = -atan2(Z,trueX);                                  
+    long d1 = sq(L_FEMUR)-sq(L_TIBIA)+sq(im);             //   Femur ==> /
+    long d2 = 2*L_FEMUR*im;                               //            /
+    float q2 = acos((float)d1/(float)d2);                 //Coxa v     /  <== Angle
+    ans.femur = radToServo(q1+q2);                        //----------/ - - - - - - - - <== Horizon
 
-    // and tibia angle from femur...
-    d1 = sq(L_FEMUR)-sq(im)+sq(L_TIBIA);
-    d2 = 2*L_TIBIA*L_FEMUR;
-    ans.tibia = radToServo(acos((float)d1/(float)d2)-1.57);
-
-    return ans;
+    // and tibia angle from femur...                        // Femur    ==>   /\
+    d1 = sq(L_FEMUR)-sq(im)+sq(L_TIBIA);                    //               /  \
+    d2 = 2*L_TIBIA*L_FEMUR;                                 //              / ^  \
+    ans.tibia = radToServo(acos((float)d1/(float)d2)-1.57); //             /  ^   \
+                                                            //            / Angle? \ <== Tibia
+    return ans;                                             //
 
 }
 
