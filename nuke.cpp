@@ -96,7 +96,7 @@ ik_sol_t legIK(int X, int Y, int Z){
 
     // first, make this a 2DOF problem... by solving coxa
     ans.coxa = radToServo(atan2(X,Y));
-    long trueX = sqrt(sq((long)X)+sq((long)Y)) - L_COXA;  //Pythagorean Theorem - Coxa length (?)
+    long trueX = sqrt(sq((long)X)+sq((long)Y)) - L_COXA;  
     long im = sqrt(sq((long)trueX)+sq((long)Z));    // length of imaginary leg
 
     // get femur angle above horizon...
