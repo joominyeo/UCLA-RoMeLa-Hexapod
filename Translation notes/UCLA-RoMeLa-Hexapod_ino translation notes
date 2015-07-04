@@ -1,0 +1,132 @@
+
+
+
+
+
+Grants access to the Servo library
+Grants access to the controller library
+Grants access to the commander library
+grants access to anything referenced in nuke.h
+
+
+illicits use for the variable AX12_HEXAPOD
+
+
+Some variable stuff
+makes the multiplier variable
+
+sets the ripple gait speed to 1
+sets the amble gait speed to 3
+sets the tripod gait speed to 5
+
+#ifdef means "if defined," and AX12_HEXAPOD is defined in line 12
+sets the top speed of the bot to 10
+#endif ends the "if defined" statement
+
+AX18_HEXAPOD is not defined, therefore
+top speed is not set to 12
+end the if statement
+
+starts setup statement
+sets pin 0 to output data (whatever the heck is put in there)
+
+sets up IK (Inverse Kinematics)
+picks the amble gait
+
+sets up the serial for Serial.print, etc.
+
+
+waits a second
+creates a voltage variable and sets it to the voltage running through the servos
+v
+These 3 lines print "System Voltage: [voltage] volts."
+^
+if the voltage is within the paramaters of less than 10 volts
+
+
+stands up the hexapod
+"
+"
+"
+"
+"
+"
+"
+"
+sets the multiplier to 3 (AMBLE_SPEED's value)
+
+main loop executes
+
+
+if there are commands to read (button inputs?)
+then set pin 0 to the current value of ????
+
+if R1 pressed
+switch to the smooth ripple gait
+set multiplier to 1
+
+if R2 pressed
+switch to the smooth amble gait
+set multiplier to 3
+
+if R3 pressed
+switch to the ripple gait
+set multiplier to 1
+
+if L4 pressed
+switch to the amble gait
+set multiplier to 3
+
+if L5 pressed
+switch to the slower tripod gait
+set multiplier to 5
+
+if L6 pressed
+switch to the faster tripod gait
+set multiplier to 10
+
+
+if walk-vertical > 40 or < -5 then //I'm assuming this is the left joystick up/down
+set the forward speed to the multiplier * the input value / 2
+
+otherwise
+
+set the forward speed to 0
+
+
+if walk-horizontal > 40 or < -35 then //I'm also assuming this is the left joystick, but left/right
+set the sideways speed to the multiplier * the input value / 2
+
+otherwise
+
+set the horizontal speed to 0
+
+
+if look-horizontal > 40 or < -40 then //I'm assuming this is the right joystick left/right (up/down do nothing?)
+set the rotation speed to the negative value of the input / 100
+
+otherwise
+
+set the rotation speed to 0
+
+
+/*
+
+
+
+This is for the aesthetic pleasure, but we're not gonna use it
+
+
+
+
+*/
+
+
+
+if done, then
+do the inverse kinematics function
+some controller stuff
+
+
+
+update joints??
