@@ -38,7 +38,7 @@ void DefaultGaitSetup(){
 ik_req_t DefaultGaitGen(int leg){
   if( MOVING ){
     // are we moving?
-    if(step == gaitLegNo[leg]){
+    if(step == gaitLegNo[leg]){ // it looks like "step" is a global variable
       // leg up, middle position
       gaits[leg].x = 0;
       gaits[leg].y = 0;
