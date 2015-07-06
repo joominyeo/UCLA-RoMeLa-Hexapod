@@ -56,7 +56,7 @@ void setupIK(){
   endpoints[LEFT_REAR].y = -118;
   endpoints[LEFT_REAR].z = 97;
 
-  liftHeight = 50;
+  liftHeight = 35;
   stepsInCycle = 1;
   step = 0;
 }
@@ -96,22 +96,22 @@ ik_sol_t legIK(int X, int Y, int Z){
 
     // first, make this a 2DOF problem... by solving coxa
     ans.coxa = radToServo(atan2(X,Y));
-    long trueX = sqrt(sq((long)X)+sq((long)Y)) - L_COXA;  
+    long trueX = sqrt(sq((long)X)+sq((long)Y)) - L_COXA;
     long im = sqrt(sq((long)trueX)+sq((long)Z));    // length of imaginary leg
 
     // get femur angle above horizon...
-    float q1 = -atan2(Z,trueX);                                  
-    long d1 = sq(L_FEMUR)-sq(L_TIBIA)+sq(im);             //   Femur ==> /
-    long d2 = 2*L_FEMUR*im;                               //            /
-    float q2 = acos((float)d1/(float)d2);                 //Coxa v     /  <== Angle
-    ans.femur = radToServo(q1+q2);                        //----------/_______________ <== Horizon
+    float q1 = -atan2(Z,trueX);
+    long d1 = sq(L_FEMUR)-sq(L_TIBIA)+sq(im);
+    long d2 = 2*L_FEMUR*im;
+    float q2 = acos((float)d1/(float)d2);
+    ans.femur = radToServo(q1+q2);
 
-    // and tibia angle from femur...                        // Femur    ==>   /\
-    d1 = sq(L_FEMUR)-sq(im)+sq(L_TIBIA);                    //               /  \
-    d2 = 2*L_TIBIA*L_FEMUR;                                 //              / ^  \
-    ans.tibia = radToServo(acos((float)d1/(float)d2)-1.57); //             /  ^   \
-                                                            //            / Angle? \ <== Tibia
-    return ans;                                             //
+    // and tibia angle from femur...
+    d1 = sq(L_FEMUR)-sq(im)+sq(L_TIBIA);
+    d2 = 2*L_TIBIA*L_FEMUR;
+    ans.tibia = radToServo(acos((float)d1/(float)d2)-1.57);
+
+    return ans;
 
 }
 
@@ -277,5 +277,5 @@ void doIK(){
         Serial.print("LM_TIBIA FAIL: ");
         Serial.println(servo);
     }
-    step = (step+1)%stepsInCycle; //Increases step by one until it reaches the value of stepsInCycle, then resets to 0
+    step = (step+1)%stepsInCycle;
 }
