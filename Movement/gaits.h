@@ -20,7 +20,7 @@ extern void (*gaitSetup)();
 /* tripod gaits are only for hexapods */
 #define TRIPOD                  6
 
-#define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 0.05 || Rspeed < -0.05))
+#define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 5 || Rspeed < -5))
 /* Standard Transition time should be of the form (k*BIOLOID_FRAME_LENGTH)-1
  *  for maximal accuracy. BIOLOID_FRAME_LENGTH = 33ms, so good options include:
  *   32, 65, 98, etc...
@@ -31,13 +31,15 @@ extern void (*gaitSetup)();
 
 /* Simple calculations at the beginning of a cycle. */
 void DefaultGaitSetup(){
-    // nothing!
 }
 
-/* Simple, fast, and rough gait. Legs will make a fast triangular stroke. */
+/* Simple, fast, and rough gait. Legs will make a fast triangular stroke.*/
 ik_req_t DefaultGaitGen(int leg){
   if( MOVING ){
-    // are we moving?
+     gaits[0].x += Xspeed;
+    gaits[0].y += Yspeed;
+    gaits[0].z += Rspeed;
+    /* // are we moving?
     if(step == gaitLegNo[leg]){ // it looks like "step" is a global variable
       // leg up, middle position
       gaits[leg].x = 0;
@@ -60,10 +62,10 @@ ik_req_t DefaultGaitGen(int leg){
   }else{ // stopped
     gaits[leg].z = 0;
   }
-  return gaits[leg];
+  return gaits[leg];*/
 }
-
-/* Smoother, slower gait. Legs will make a arc stroke. */
+}
+/* Smoother, slower gait. Legs will make a arc stroke.
 ik_req_t SmoothGaitGen(int leg){
   if( MOVING ){
     // are we moving?
@@ -103,10 +105,10 @@ ik_req_t SmoothGaitGen(int leg){
   }
   return gaits[leg];
 }
-
+*/
 int currentGait = -1;
 
-void gaitSelect(int GaitType){
+/*void gaitSelect(int GaitType){
   if(GaitType == currentGait)
     return;
   currentGait = GaitType;
@@ -175,7 +177,7 @@ void gaitSelect(int GaitType){
   if(cycleTime == 0)
     cycleTime = (stepsInCycle*tranTime)/1000.0;
   step = 0;
-}
+}*/
 
 ik_req_t (*gaitGen)(int leg) = &DefaultGaitGen;
 void (*gaitSetup)() = &DefaultGaitSetup;
