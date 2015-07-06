@@ -9,7 +9,7 @@ sets the minimum value for each servo
 sets the maximum value for each servo
 
 
-????
+syncs the bioloid
 run the inverse kinematics request using the end points of the current leg
 create a variable for body roll and set it to 0
 create a variable for body pitch and set it to 0
@@ -117,3 +117,164 @@ output the answer with the femur and tibia subvars
 
 the inverse kinematics function
 create var servo
+create subvars req and gait for the inverse kinematics request
+create subvar sol for the inverse kinematics solver
+
+run the gait setup
+
+
+set gait to the right front leg (0)
+set req to the current coordinates of the rf leg
+set sol to the necessary servo values to get to the requested point
+set servo to 368 + the nec coxa angle
+if servo is within the min/max (225/792)
+  move the coxa servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 524 + the nec femur angle
+if servo is within the min/max (164/862)
+  move the femur servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 354 + the nec tibia angle
+if servo is within the min/max (158/747)
+  move the tibia servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+
+
+set gait to the right rear leg (1)
+set req to the current coordinates of the rr leg
+set sol to the necessary servo values to get to the requested point
+set servo to 656 - the nec coxa angle
+if servo is within the min/max (229/794)
+  move the coxa servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 524 + the nec femur angle
+if servo is within the min/max (156/857)
+  move the femur servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 354 + the nec tibia angle
+if servo is within the min/max (155/747)
+  move the tibia servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+
+
+set gait to the left front leg (2)
+set req to the current coordinates of the lf leg
+set sol to the necessary servo values to get to the requested point
+set servo to 656 - the nec coxa angle
+if servo is within the min/max (222/790)
+  move the coxa servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 500 - the nec femur angle
+if servo is within the min/max (159/855)
+  move the femur servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 670 - the nec tibia angle
+if servo is within the min/max (279/857)
+  move the tibia servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+
+
+set gait to the left rear leg (3)
+set req to the current coordinates of the lr leg
+set sol to the necessary servo values to get to the requested point
+set servo to 368 + the nec coxa angle
+if servo is within the min/max (223/788)
+  move the coxa servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 500 - the nec femur angle
+if servo is within the min/max (159/859)
+  move the femur servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 670 - the nec tibia angle
+if servo is within the min/max (272/860)
+  move the tibia servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+
+
+set gait to the right middle leg (4)
+set req to the current coordinates of the rm leg
+set sol to the necessary servo values to get to the requested point
+set servo to 512 + the nec coxa angle
+if servo is within the min/max (233/789)
+  move the coxa servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 524 + the nec femur angle
+if servo is within the min/max (157/860)
+  move the femur servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 354 + the nec tibia angle
+if servo is within the min/max (157/743)
+  move the tibia servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+
+
+set gait to the left middle leg (5)
+set req to the current coordinates of the lm leg
+set sol to the necessary servo values to get to the requested point
+set servo to 512 - the nec coxa angle
+if servo is within the min/max (226/789)
+  move the coxa servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 500 - the nec femur angle
+if servo is within the min/max (158/858)
+  move the femur servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+set servo to 670 - the nec tibia angle
+if servo is within the min/max (271/859)
+  move the tibia servo
+otherwise
+  tell the serial that it failed
+  output the failed value
+
+changes step by 1, unless step = steps in the cycle, then set it to 0
