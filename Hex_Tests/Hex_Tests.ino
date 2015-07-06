@@ -21,6 +21,7 @@ Serial.begin(38400);
   Serial.println (" volts.");
 
   if (voltage < 10.0)
+    while(1);
 
 
   // stand up slowly
