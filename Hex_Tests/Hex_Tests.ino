@@ -6,7 +6,7 @@ extern BioloidController bioloid;
 
 #define AX12_HEXAPOD
 
-void Setup(){
+void setup(){
 Serial.begin(38400);
   pinMode(0,OUTPUT);
 
@@ -113,3 +113,4 @@ void doIK(){
     }
 }
 
+void loop(){}
