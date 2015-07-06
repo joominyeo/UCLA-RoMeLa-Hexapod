@@ -2,9 +2,38 @@
 #include <BioloidController.h>
 #include <Arduino.h>
 #include <math.h>
+extern BioloidController bioloid;
 
-void setup(){
+#define AX12_HEXAPOD
+
+void Setup(){
 Serial.begin(38400);
+  pinMode(0,OUTPUT);
+
+  delay (1000);
+
+  float voltage = (ax12GetRegister (1, AX_PRESENT_VOLTAGE, 1)) / 10.0;
+
+  Serial.print ("System Voltage: ");
+
+  Serial.print (voltage);
+
+  Serial.println (" volts.");
+
+  if (voltage < 10.0)
+
+
+  // stand up slowly
+  bioloid.poseSize = 18;
+  bioloid.readPose();
+  doIK();
+  bioloid.interpolateSetup(1000);
+  while(bioloid.interpolating > 0){
+    bioloid.interpolateStep();
+    delay(3);
+
+  }
+
 }
 
 #define L_COXA      52  // MM distance from coxa servo to femur servo
@@ -57,8 +86,6 @@ ik_sol_t legIK(int X, int Y, int Z){
 
 }
 
-extern BioloidController bioloid;
-
 void doIK(){
   int servo;
   ik_sol_t sol;
@@ -85,6 +112,4 @@ void doIK(){
         Serial.println(servo);
     }
 }
-
-void loop(){}
 
