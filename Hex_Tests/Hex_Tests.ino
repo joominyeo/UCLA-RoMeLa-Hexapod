@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <math.h>
 
-void Setup(){
+void setup(){
 Serial.begin(38400);
 }
 
@@ -85,4 +85,6 @@ void doIK(){
         Serial.println(servo);
     }
 }
+
+void loop(){}
 
