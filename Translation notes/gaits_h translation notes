@@ -46,10 +46,10 @@ set the height of that leg to -50
 set the rotation of that leg to 0
 otherwise (line 41), if (step = the gait's leg # + 1 or the step = the gait's leg # -(1 less than the max of the gait's stride) ) and the height of the leg is less than 0
 
-set the leg's front/back position to (forward speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 2)
-set the leg's side/side position to (sideways speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 2)
+set the leg's front/back position to (forward speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 2)
+set the leg's side/side position to (sideways speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 2)
 set the leg's up/down position to 0
-set the leg's rotational position to (rotational speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 2)
+set the leg's rotational position to (rotational speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 2)
 otherwise (line 47)
 
 set the leg's front/back position to the current front/back position - (forward speed * time left in the cycle) / total steps in the cycle
@@ -81,16 +81,16 @@ set the height of that leg to -50
 set the rotation of that leg to 0
 otherwise (line 76), if (step = the gait's leg # + 2 and the height of the leg is less than 0)
 
-set the leg's front/back position to (forward speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 4)
-set the leg's side/side position to (sideways speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 4)
+set the leg's front/back position to (forward speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 4)
+set the leg's side/side position to (sideways speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 4)
 set the leg's up/down position to 0
-set the leg's rotational position to (rotational speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 4)
+set the leg's rotational position to (rotational speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 4)
 otherwise (line 82), if (step = the gait's leg # + 3 and the height of the leg is less than 0)
 
-set the leg's front/back position to (forward speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 4)
-set the leg's side/side position to (sideways speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 4)
+set the leg's front/back position to (forward speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 4)
+set the leg's side/side position to (sideways speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 4)
 set the leg's up/down position to 0
-set the leg's rotational position to (rotational speed * time left in the cycle * # of steps used to push?) / (total steps in the cycle * 4)
+set the leg's rotational position to (rotational speed * time left in the cycle * # of steps on the ground) / (total steps in the cycle * 4)
 otherwise (line 88)
 
 set the leg's front/back position to the current front/back position - (forward speed * time left in the cycle) / total steps in the cycle
@@ -122,7 +122,7 @@ set the left-middle leg's # to 4
 set the left-front leg's # to 6
 set the right-rear leg's # to 8
 set the right-middle leg's # to 10
-set the # of steps that push to 10 (?)
+set the # of steps on the ground to 10
 set the total # of steps in the cycle to 12
 otherwise (line 116), if the smooth ripple gait is selected
 set the gait generator to the smooth gait generator
@@ -133,7 +133,7 @@ set the left-middle leg's # to 8
 set the left-front leg's # to 12
 set the right-rear leg's # to 16
 set the right-middle leg's # to 20
-set the # of steps that push to 20 (?)
+set the # of steps on the ground to 20
 set the total # of steps in the cycle to 24
 set the transition time to 65
 otherwise (line 116), if the smooth amble gait is selected
@@ -145,7 +145,7 @@ set the left-middle leg's # to 4
 set the left-front leg's # to 4
 set the right-rear leg's # to 8
 set the right-middle leg's # to 8
-set the # of steps that push to 8 (?)
+set the # of steps on the ground to 8
 set the total # of steps in the cycle to 12
 set the transition time to 65
 otherwise (line 116), if the amble gait is selected
@@ -157,7 +157,7 @@ set the left-middle leg's # to 2
 set the left-front leg's # to 2
 set the right-rear leg's # to 4
 set the right-middle leg's # to 4
-set the # of steps that push to 4 (?)
+set the # of steps that on the ground to 4
 set the total # of steps in the cycle to 6
 otherwise (line 116), if the tripod gait is selected
 set the gait generator to the default gait generator
@@ -168,7 +168,7 @@ set the left-middle leg's # to 0
 set the left-front leg's # to 2
 set the right-rear leg's # to 2
 set the right-middle leg's # to 2
-set the # of steps that push to 2 (?)
+set the # of steps on the ground to 2
 set the total # of steps in the cycle to 4
 set the transition time to 65
 

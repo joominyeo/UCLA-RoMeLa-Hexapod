@@ -1,0 +1,119 @@
+Grants access to the Servo library
+Grants access to the controller library
+Grants access to the Arduino library
+Grants access to the math library?
+grants access to anything referenced in nuke.h
+
+
+sets the minimum value for each servo
+sets the maximum value for each servo
+
+
+????
+run the inverse kinematics request using the end points of the current leg
+create a variable for body roll and set it to 0
+create a variable for body pitch and set it to 0
+create a variable for body rotation and set it to 0
+create a variable for body offset f/b and set it to 0
+create a variable for body offset s/s and set it to 0
+create a variable for body speed f/b
+create a variable for body speed s/s
+create a variable for body speed rot
+
+
+create a variable for the order to step for each leg
+run the inverse kinematics request using the gait values for each leg
+create a variable for the number of steps on the ground
+create a variable for the number of steps in the cycle
+create a variable for the current step
+create a variable for the transition time
+create a variable for the lift height
+create a variable for the time of each cycle
+
+
+run the setup function
+set the f/b endpoint of the rf leg to 52
+set the s/s endpoint of the rf leg to 118
+set the u/d endpoint of the rf leg to 97
+
+set the f/b endpoint of the rr leg to -52
+set the s/s endpoint of the rr leg to 118
+set the u/d endpoint of the rr leg to 97
+
+set the f/b endpoint of the rm leg to 0
+set the s/s endpoint of the rm leg to 118
+set the u/d endpoint of the rm leg to 97
+
+set the f/b endpoint of the lm leg to 0
+set the s/s endpoint of the lm leg to -118
+set the u/d endpoint of the lm leg to 97
+
+set the f/b endpoint of the lf leg to 52
+set the s/s endpoint of the lf leg to -118
+set the u/d endpoint of the lf leg to 97
+
+set the f/b endpoint of the lr leg to -52
+set the s/s endpoint of the lr leg to -118
+set the u/d endpoint of the lr leg to 97
+
+set the lift height to 50
+set the number of steps in the cycle to 0
+set the step # to 0
+
+
+grants access to gaits.h
+
+
+converts radian values to servo values
+""
+returns the converted value
+
+
+
+declares what values the inverse kinematics request will solve for
+creates the answer
+
+creates the y measurement for the angle of roll of the body (cosB = yRoll)
+creates the z measurement for the angle of roll of the body (sinB = zRoll)
+creates the x measurement for the angle of pitch of the body (cosG = xPitch)
+creates the z measurement for the angle of pitch of the body (sinG = zPitch)
+creates the x measurement for the angle of rotation of the body + ??? (cosA = xRot)
+creates the y measurement for the angle of rotation of the body + ??? (sinA = yRot)
+
+create a variable for the total x and set it to the x position + the x position displaced from the x position + the body's x offset
+create a variable for the total y and set it to the y position + the y position displaced from the y position + the body's y offset
+
+set the x subvar of the request's output to the total x - (total x * xPitch *xRot + total y * zRoll * zPitch * xRot + Z position * yRoll * zPitch * xRot - total y * yRoll * yRot + Z position * zRoll * yRot) + the body's x offset
+set the y subvar of the request's output to the total y - (total x * xPitch *xRot + total y * zRoll * zPitch * yRot + Z position * yRoll * zPitch * yRot - total y * yRoll * xRot + Z position * zRoll * xRot) + the body's y offset
+set the z subvar of the request's output to the Z position - (-total x * zPitch + total y * zRoll * xPitch + Z position * yRoll * xPitch)
+
+output the answer with the x, y, and z subvars
+
+
+
+the inverse kinematics solver with subvar legIK
+creates the answer
+
+
+set the value of the coxa subvar to the servo measurement of the angle between x and y
+create var trueX and set it to the hypotenuse of the imaginary triangle - the length of the coxa
+create var im (imaginary) and set it to the length of the entire imaginary leg
+
+
+create var q1 and set it to the angle between the Z value and trueX
+create var d1 and set it to (femur length)^2 - (tibia length)^2 + (imaginary leg)^2
+create var d2 and set it to 2 * femur length * imaginary leg length
+create var q2 and set it to the angle of the adj side (d1) / hyp (d2)
+set the femur subvar of the answer to the servo angle of q1 + q2
+
+
+set d1 to (femur length)^2 - (imaginary length)^2 + (tibia length)^2
+set d2 to 2 * tibia length * femur length
+set the tibia subvar of the answer to the servo angle of (adj (d1) / hyp (d2) - pi/2)
+
+output the answer with the femur and tibia subvars
+
+
+
+the inverse kinematics function
+create var servo
