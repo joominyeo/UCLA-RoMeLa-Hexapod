@@ -1,0 +1,121 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if NUKE is not defined
+define NUKE
+
+create LEG_COUNT and set it to 6
+
+
+
+
+
+create a var for the radius b/t f/b legs (x) and set it to 60 mm
+create a var for the radius b/t f/b legs (y) and set it to 60 mm
+create a var for the radius b/t the mid legs and set it to 100 mm
+
+
+creates a var for the coxa length and sets it to 52 mm
+creates a var for the femur length and sets it to 82 mm
+creates a var for the tibia length and sets it to 140 mm
+
+Basically:
+1 = left front coxa servo
+2 = right front coxa servo
+3 = left front femur servo
+4 = right front femur servo
+5 = left front tibia servo
+6 = right front tibia servo
+7 = left rear coxa servo
+8 = right rear coxa servo
+9 = left rear femur servo
+10 = right rear femur servo
+11 = left rear tibia servo
+12 = right rear tibia servo
+13 = left middle coxa servo
+14 = right middle coxa servo
+15 = left middle femur servo
+16 = right middle femur servo
+17 = left middle tibia servo
+18 = right middle tibia servo
+
+
+initializes the position request structure for any coordinates
+  creates var x
+  creates var y
+  creates var z
+  creates var r
+establishes this under ik_req_t
+
+
+initializes the solver for the servo angles necessary to get to the requested position
+  creates var coxa
+  creates var femur
+  creates var tibia
+establishes this under ik_sol_t
+
+
+creates the universal subvar for the endpoints of each leg
+creates/defines RIGHT_FRONT as 0
+creates/defines RIGHT_REAR as 1
+creates/defines LEFT_FRONT as 2
+creates/defines LEFT_REAR as 3
+creates/defines RIGHT_MIDDLE as 4
+creates/defines LEFT_MIDDLE as 5
+
+creates the universal bioloid variable
+
+
+creates a universal variable for body roll
+creates a universal variable for body pitch
+creates a universal variable for body rotation
+creates a universal variable for the body's f/b position
+creates a universal variable for the body's s/s position
+
+
+creates a universal variable for the body's f/b speed
+creates a universal variable for the body's s/s speed
+creates a universal variable for the body's rotation speed
+creates a universal variable for the transition time
+creates a universal variable for the time left in each cycle
+creates a universal variable for the total # of steps in each cycle
+creates a universal variable for the step height
+creates a universal variable for the current step #
+
+
+creates a universal variable for the order to move the legs in
+creates a universal variable for the gait position
+
+
+creates the function to convert radian values to servo values with subvar rads
+
+creates the function to select a gait with subvar GaitType
+
+grants access to anything mentioned in gaits.h
+
+
+the function to determine the location of each leg
+
+the function to calculate the needed servo angles
+
+the leg mover, per se
+
+sets up the inverse kinematics
+
+end the if statement (from the beginning)
