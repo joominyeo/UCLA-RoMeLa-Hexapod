@@ -19,6 +19,8 @@ extern void (*gaitSetup)();
 #define AMBLE_SMOOTH            5
 /* tripod gaits are only for hexapods */
 #define TRIPOD                  6
+/* movement gait is only for one leg */
+#define MOVEMENT                7
 
 #define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 0.05 || Rspeed < -0.05))
 /* Standard Transition time should be of the form (k*BIOLOID_FRAME_LENGTH)-1
@@ -80,11 +82,11 @@ ik_req_t SmoothGaitGen(int leg){
       gaits[leg].z = -liftHeight;
       gaits[leg].r = 0;
     }else if((step == gaitLegNo[leg] + 2) && (gaits[leg].z < 0)){
-      // leg halfway down                                
+      // leg halfway down
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);  
-      gaits[leg].z = -liftHeight/2;                                             
-      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle); 
+      gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      gaits[leg].z = -liftHeight/2;
+      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
     }else if((step == gaitLegNo[leg]+3) && (gaits[leg].z < 0)){
       // leg down position                                           NOTE: dutyFactor = pushSteps/StepsInCycle
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(2*stepsInCycle);     // travel/Cycle = speed*cycleTime
@@ -113,7 +115,7 @@ void gaitSelect(int GaitType){
   tranTime = STD_TRANSITION;
   cycleTime = 0;
   // simple ripple, 12 steps
-  if(GaitType == RIPPLE){        
+  if(GaitType == RIPPLE){
     gaitGen = &DefaultGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
@@ -124,7 +126,7 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 10;
     pushSteps = 10;
     stepsInCycle = 12;
-  }else if(GaitType == RIPPLE_SMOOTH){    
+  }else if(GaitType == RIPPLE_SMOOTH){
     gaitGen = &SmoothGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
@@ -136,7 +138,7 @@ void gaitSelect(int GaitType){
     pushSteps = 20;
     stepsInCycle = 24;
     tranTime = 65;
-  }else if(GaitType == AMBLE_SMOOTH){    
+  }else if(GaitType == AMBLE_SMOOTH){
     gaitGen = &SmoothGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
@@ -171,6 +173,17 @@ void gaitSelect(int GaitType){
     pushSteps = 2;
     stepsInCycle = 4;
     tranTime = 65;
+  }else if(GaitType == MOVEMENT){
+    gaitGen = 000000000000;//???;
+    gaitSetup = 000000000000;//???
+    gaitLegNo[RIGHT_FRONT] = 0;
+    gaitLegNo[LEFT_MIDDLE] = 2;
+    gaitLegNo[RIGHT_REAR] = 2;
+    gaitLegNo[LEFT_FRONT] = 2;
+    gaitLegNo[RIGHT_MIDDLE] = 2;
+    gaitLegNo[LEFT_REAR] = 2;
+    pushSteps = 0; //Is this right?
+    stepsInCycle = 0;
   }
   if(cycleTime == 0)
     cycleTime = (stepsInCycle*tranTime)/1000.0;

@@ -19,6 +19,7 @@ int multiplier;
 #define RIPPLE_SPEED    1
 #define AMBLE_SPEED     3
 #define TRIPOD_SPEED    5
+#define MOVEMENT_SPEED  1
 
 #ifdef AX12_HEXAPOD
 #define TOP_SPEED      10
@@ -62,29 +63,33 @@ void loop(){
   if(command.ReadMsgs() > 0){
     digitalWrite(0,HIGH-digitalRead(0));
     // select gaits
-    if(command.buttons&BUT_R1){ 
-      gaitSelect(RIPPLE_SMOOTH); 
+    if(command.buttons&BUT_R1){
+      gaitSelect(RIPPLE_SMOOTH);
       multiplier=RIPPLE_SPEED;
     }
-    if(command.buttons&BUT_R2){ 
-      gaitSelect(AMBLE_SMOOTH); 
+    if(command.buttons&BUT_R2){
+      gaitSelect(AMBLE_SMOOTH);
       multiplier=AMBLE_SPEED;
     }
-    if(command.buttons&BUT_R3){ 
-      gaitSelect(RIPPLE); 
+    if(command.buttons&BUT_R3){
+      gaitSelect(RIPPLE);
       multiplier=RIPPLE_SPEED;
     }
-    if(command.buttons&BUT_L4){ 
-      gaitSelect(AMBLE); 
+    if(command.buttons&BUT_L4){
+      gaitSelect(AMBLE);
       multiplier=AMBLE_SPEED;
     }
-    if(command.buttons&BUT_L5){ 
-      gaitSelect(TRIPOD); 
+    if(command.buttons&BUT_L5){
+      gaitSelect(TRIPOD);
       multiplier=TRIPOD_SPEED;
     }
-    if(command.buttons&BUT_L6){ 
-      gaitSelect(TRIPOD); 
+    if(command.buttons&BUT_L6){
+      gaitSelect(TRIPOD);
       multiplier=TOP_SPEED;
+    }
+    if(command.buttons&BUT_RT){
+    gaitSelect(MOVEMENT);
+    multiplier=MOVEMENT_SPEED;
     }
     // set movement speed
     if((command.walkV) > 40 || (command.walkV < -5) ){
@@ -94,15 +99,15 @@ void loop(){
     {
       Xspeed = 0;
     }
-    
-    if((command.walkH) > 40 || (command.walkH < -35) ){   
+
+    if((command.walkH) > 40 || (command.walkH < -35) ){
     Yspeed = (multiplier*command.walkH)/2;
     }
     else
     {
      Yspeed = 0;
     }
-    
+
     if((command.lookH) > 40 || (command.lookH < -40) ){
     Rspeed = -(command.lookH)/100.0;
     }
@@ -110,16 +115,16 @@ void loop(){
     {
       Rspeed = 0;
     }
-    
-// Use the phoenix code if you want pretty body rotation. :)    
+
+// Use the phoenix code if you want pretty body rotation. :)
 //
 //    if((command.buttons&BUT_LT) > 0){
 //      bodyRotY = (((float)command.lookV))/300.0;
-//      bodyRotZ = ((float)command.lookH)/300.0;  
-//      bodyRotX = ((float)command.walkH)/300.0;  
+//      bodyRotZ = ((float)command.lookH)/300.0;
+//      bodyRotX = ((float)command.walkH)/300.0;
 //      Rspeed = 0;
 //      Xspeed = 0;
-//      Yspeed = 0;  
+//      Yspeed = 0;
 //    }
 
  }
