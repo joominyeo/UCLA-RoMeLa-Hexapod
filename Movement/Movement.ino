@@ -70,7 +70,8 @@ void loop(){
   v = analogRead(1);
   d = 25599*pow(v,-1.284);
   if(d<20.00)
-  {  tone(buzzer, 262, 1000);}
+  {tone(buzzer, 262, 1000);
+   delay(1000);}
   else {
   // take commands
   if(command.ReadMsgs() > 0){
