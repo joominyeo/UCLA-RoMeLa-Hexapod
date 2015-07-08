@@ -16,9 +16,6 @@
 Commander command = Commander();
 int multiplier;
 
-int v;  //numerical value read from the IR Sensor
-int d;  //distance in centimeters
-
 #define RIPPLE_SPEED    1
 #define AMBLE_SPEED     3
 #define TRIPOD_SPEED    5
@@ -67,11 +64,6 @@ void setup(){
 }
 
 void loop(){
-v = analogRead(1);
-d = 25599*pow(v,-1.284);
-if(d<20.00)
-{  tone(buzzer, 262, 1000);}
-else {
   // take commands
   if(command.ReadMsgs() > 0){
     digitalWrite(0,HIGH-digitalRead(0));
@@ -153,5 +145,4 @@ else {
   }
   // update joints
   bioloid.interpolateStep();
-}
 }
