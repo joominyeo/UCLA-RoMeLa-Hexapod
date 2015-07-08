@@ -29,8 +29,13 @@ int multiplier;
 #define TOP_SPEED      12
 #endif
 
+//Buzzer pin
+#define buzzer         A0
+
 void setup(){
   pinMode(0,OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  tone(buzzer, 262, 1000);
   // setup IK
   setupIK();
   gaitSelect(AMBLE_SMOOTH);
@@ -90,6 +95,10 @@ void loop(){
     if(command.buttons&BUT_RT){
     gaitSelect(MOVEMENT);
     multiplier=MOVEMENT_SPEED;
+    }
+    if(command.buttons&BUT_LT){
+      gaitSelect(STRUGGLE);
+      multiplier=AMBLE_SPEED;
     }
     // set movement speed
     if((command.walkV) > 40 || (command.walkV < -5) ){

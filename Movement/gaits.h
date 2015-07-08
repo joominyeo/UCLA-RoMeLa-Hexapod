@@ -21,6 +21,8 @@ extern void (*gaitSetup)();
 #define TRIPOD                  6
 /* movement gait is only for one leg */
 #define MOVEMENT                7
+/* custom gait; RIP*/
+#define STRUGGLE                8
 
 #define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 0.05 || Rspeed < -0.05))
 /* Standard Transition time should be of the form (k*BIOLOID_FRAME_LENGTH)-1
@@ -35,7 +37,24 @@ extern void (*gaitSetup)();
 void DefaultGaitSetup(){
     // nothing!
 }
-
+/*Just for moving one leg*/
+ik_req_t MovementGaitGen(int leg){
+  if( MOVING ){
+    if (step == gaitLegNo[leg]){
+    gaits[leg].x += (Xspeed / 5);
+    gaits[leg].y += (Yspeed / 5);
+    gaits[leg].z += (Rspeed * 10);
+  }
+}else{
+    //gaits[leg].x = 0;
+    //gaits[leg].y = 0;
+    //gaits[leg].z = 0;
+    gaits[leg].x -= (sq(abs(gaits[leg].x)) / gaits[leg].x) / 2;
+    gaits[leg].y -= (sq(abs(gaits[leg].y)) / gaits[leg].y) / 2;
+    gaits[leg].z -= (sq(abs(gaits[leg].z)) / gaits[leg].z) / 2;
+  }
+  return gaits[leg];
+}
 /* Simple, fast, and rough gait. Legs will make a fast triangular stroke. */
 ik_req_t DefaultGaitGen(int leg){
   if( MOVING ){
@@ -174,8 +193,8 @@ void gaitSelect(int GaitType){
     stepsInCycle = 4;
     tranTime = 65;
   }else if(GaitType == MOVEMENT){
-    gaitGen = 000000000000;//???;
-    gaitSetup = 000000000000;//???
+    gaitGen = &MovementGaitGen;//???;
+    gaitSetup = &DefaultGaitSetup;//???
     gaitLegNo[RIGHT_FRONT] = 0;
     gaitLegNo[LEFT_MIDDLE] = 2;
     gaitLegNo[RIGHT_REAR] = 2;
@@ -183,7 +202,18 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 2;
     gaitLegNo[LEFT_REAR] = 2;
     pushSteps = 0; //Is this right?
-    stepsInCycle = 0;
+    stepsInCycle = 1;
+  }else if(GaitType == STRUGGLE){
+    gaitGen = &DefaultGaitGen;
+    gaitSetup = &DefaultGaitSetup;
+    gaitLegNo[RIGHT_FRONT] = 0;
+    gaitLegNo[LEFT_REAR] = 4;
+    gaitLegNo[LEFT_MIDDLE] = 2;
+    gaitLegNo[LEFT_FRONT] = 2;
+    gaitLegNo[RIGHT_REAR] = 4;
+    gaitLegNo[RIGHT_MIDDLE] = 0;
+    pushSteps = 4;
+    stepsInCycle = 6;
   }
   if(cycleTime == 0)
     cycleTime = (stepsInCycle*tranTime)/1000.0;
