@@ -67,14 +67,13 @@ void setup(){
 }
 
 void loop(){
-  v = analogRead(1);
+  /*v = analogRead(1);
   d = 25599*pow(v,-1.284);
   if(d<45.00)
   {tone(buzzer, v, 100);
-   //delay(100);
+   delay(100);
  }
-  else {
-    noTone(buzzer);
+  else {*/
   // take commands
   if(command.ReadMsgs() > 0){
     digitalWrite(0,HIGH-digitalRead(0));
@@ -82,6 +81,9 @@ void loop(){
     if(command.buttons&BUT_R1){
       gaitSelect(RIPPLE_SMOOTH);
       multiplier=RIPPLE_SPEED;
+      tone(buzzer, 262, 200);
+      tone(buzzer, 294, 200);
+      tone(buzzer, 330, 200);
     }
     if(command.buttons&BUT_R2){
       gaitSelect(AMBLE_SMOOTH);
@@ -165,4 +167,4 @@ void loop(){
   // update joints
   bioloid.interpolateStep();
 }
-}
+//}
