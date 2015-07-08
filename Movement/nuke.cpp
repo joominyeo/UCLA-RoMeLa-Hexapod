@@ -19,6 +19,7 @@ int bodyPosY = 0;               // body offset (mm)
 int Xspeed;                     // forward speed (mm/s)
 int Yspeed;                     // sideward speed (mm/s)
 float Rspeed;                   // rotation speed (rad/s)
+int Zspeed;
 
 /* Gait Engine */
 int gaitLegNo[LEG_COUNT];       // order to step through legs

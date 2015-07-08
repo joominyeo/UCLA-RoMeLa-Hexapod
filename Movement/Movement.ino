@@ -69,10 +69,12 @@ void setup(){
 void loop(){
   v = analogRead(1);
   d = 25599*pow(v,-1.284);
-  if(d<20.00)
-  {tone(buzzer, 262, 1000);
-   delay(1000);}
+  if(d<45.00)
+  {tone(buzzer, v, 100);
+   //delay(100);
+ }
   else {
+    noTone(buzzer);
   // take commands
   if(command.ReadMsgs() > 0){
     digitalWrite(0,HIGH-digitalRead(0));
@@ -143,15 +145,15 @@ void loop(){
     }
 
 // Use the phoenix code if you want pretty body rotation. :)
-//
-//    if((command.buttons&BUT_LT) > 0){
-//      bodyRotY = (((float)command.lookV))/300.0;
-//      bodyRotZ = ((float)command.lookH)/300.0;
-//      bodyRotX = ((float)command.walkH)/300.0;
-//      Rspeed = 0;
-//      Xspeed = 0;
-//      Yspeed = 0;
-//    }
+
+   if((command.buttons&BUT_LT) > 0){
+      bodyRotY = (((float)command.lookV))/300.0;
+      bodyRotZ = ((float)command.lookH)/300.0;
+      bodyRotX = ((float)command.walkH)/300.0;
+      Rspeed = 0;
+      Xspeed = 0;
+      Yspeed = 0;
+    }
 
  }
 
