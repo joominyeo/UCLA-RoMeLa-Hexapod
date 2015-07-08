@@ -125,6 +125,14 @@ void loop(){
       Rspeed = 0;
     }
 
+    if((command.lookV) > 40 || (command.lookV < -40) ){
+    Zspeed = -(command.lookV);
+    }
+    else
+    {
+      Zspeed = 0;
+    }
+
 // Use the phoenix code if you want pretty body rotation. :)
 //
 //    if((command.buttons&BUT_LT) > 0){

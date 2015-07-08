@@ -92,6 +92,7 @@ extern int bodyPosY;
 extern int Xspeed;
 extern int Yspeed;
 extern float Rspeed;
+extern int Zspeed;
 extern int tranTime;
 extern float cycleTime;
 extern int stepsInCycle;

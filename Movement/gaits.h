@@ -19,7 +19,7 @@ extern void (*gaitSetup)();
 #define AMBLE_SMOOTH            5
 /* tripod gaits are only for hexapods */
 #define TRIPOD                  6
-/* movement gait is only for one leg */
+/* movement gait is only for all six legs simultaneously */
 #define MOVEMENT                7
 /* custom gait; RIP*/
 #define STRUGGLE                8
@@ -37,21 +37,21 @@ extern void (*gaitSetup)();
 void DefaultGaitSetup(){
     // nothing!
 }
-/*Just for moving one leg*/
+/*For moving all 6 legs simultaneously*/
 ik_req_t MovementGaitGen(int leg){
   if( MOVING ){
     if (step == gaitLegNo[leg]){
-    gaits[leg].x += (Xspeed / 5);
-    gaits[leg].y += (Yspeed / 5);
-    gaits[leg].z += (Rspeed * 10);
+    gaits[leg].x = -((Xspeed) * 2);
+    gaits[leg].y = -((Yspeed) * 2);
+    gaits[leg].z = Zspeed;
   }
 }else{
     //gaits[leg].x = 0;
     //gaits[leg].y = 0;
     //gaits[leg].z = 0;
-    gaits[leg].x -= (sq(abs(gaits[leg].x)) / gaits[leg].x) / 2;
-    gaits[leg].y -= (sq(abs(gaits[leg].y)) / gaits[leg].y) / 2;
-    gaits[leg].z -= (sq(abs(gaits[leg].z)) / gaits[leg].z) / 2;
+    gaits[leg].x -= (sq(abs(gaits[leg].x)) / gaits[leg].x) / 1.5;
+    gaits[leg].y -= (sq(abs(gaits[leg].y)) / gaits[leg].y) / 1.5;
+    gaits[leg].z -= (sq(abs(gaits[leg].z)) / gaits[leg].z) / 1.5;
   }
   return gaits[leg];
 }
@@ -196,11 +196,11 @@ void gaitSelect(int GaitType){
     gaitGen = &MovementGaitGen;//???;
     gaitSetup = &DefaultGaitSetup;//???
     gaitLegNo[RIGHT_FRONT] = 0;
-    gaitLegNo[LEFT_MIDDLE] = 2;
-    gaitLegNo[RIGHT_REAR] = 2;
-    gaitLegNo[LEFT_FRONT] = 2;
-    gaitLegNo[RIGHT_MIDDLE] = 2;
-    gaitLegNo[LEFT_REAR] = 2;
+    gaitLegNo[LEFT_MIDDLE] = 0;
+    gaitLegNo[RIGHT_REAR] = 0;
+    gaitLegNo[LEFT_FRONT] = 0;
+    gaitLegNo[RIGHT_MIDDLE] = 0;
+    gaitLegNo[LEFT_REAR] = 0;
     pushSteps = 0; //Is this right?
     stepsInCycle = 1;
   }else if(GaitType == STRUGGLE){
