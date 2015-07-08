@@ -49,9 +49,10 @@ ik_req_t MovementGaitGen(int leg){
     //gaits[leg].x = 0;
     //gaits[leg].y = 0;
     //gaits[leg].z = 0;
-    gaits[leg].x -= (sq(abs(gaits[leg].x)) / gaits[leg].x) / 1.5;
-    gaits[leg].y -= (sq(abs(gaits[leg].y)) / gaits[leg].y) / 1.5;
-    gaits[leg].z -= (sq(abs(gaits[leg].z)) / gaits[leg].z) / 1.5;
+    gaits[leg].x -= (sq(abs(gaits[leg].x)) / gaits[leg].x) / 1.1;
+    gaits[leg].y -= (sq(abs(gaits[leg].y)) / gaits[leg].y) / 1.1;
+    gaits[leg].z -= (sq(abs(gaits[leg].z)) / gaits[leg].z) / 1.1;
+    delay(3);
   }
   return gaits[leg];
 }

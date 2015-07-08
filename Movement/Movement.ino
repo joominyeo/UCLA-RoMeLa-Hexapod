@@ -81,9 +81,12 @@ void loop(){
     if(command.buttons&BUT_R1){
       gaitSelect(RIPPLE_SMOOTH);
       multiplier=RIPPLE_SPEED;
-      tone(buzzer, 262, 200);
+ /*     tone(buzzer, 262, 200);
+      delay (200);
       tone(buzzer, 294, 200);
+      delay (200);
       tone(buzzer, 330, 200);
+      delay (200);*/
     }
     if(command.buttons&BUT_R2){
       gaitSelect(AMBLE_SMOOTH);
@@ -114,7 +117,7 @@ void loop(){
       multiplier=AMBLE_SPEED;
     }
     // set movement speed
-    if((command.walkV) > 40 || (command.walkV < -5) ){
+    if((command.walkV) > 5 || (command.walkV < -5) ){ //lessened the > 40 parameter
       Xspeed = (multiplier*command.walkV)/2;
     }
     else
@@ -122,7 +125,7 @@ void loop(){
       Xspeed = 0;
     }
 
-    if((command.walkH) > 40 || (command.walkH < -35) ){
+    if((command.walkH) > 5 || (command.walkH < -5) ){ //changed the parameters to -5<x>5
     Yspeed = (multiplier*command.walkH)/2;
     }
     else
@@ -130,7 +133,7 @@ void loop(){
      Yspeed = 0;
     }
 
-    if((command.lookH) > 40 || (command.lookH < -40) ){
+    if((command.lookH) > 5 || (command.lookH < -5) ){ //Same^^^
     Rspeed = -(command.lookH)/100.0;
     }
     else
@@ -138,7 +141,7 @@ void loop(){
       Rspeed = 0;
     }
 
-    if((command.lookV) > 40 || (command.lookV < -40) ){
+    if((command.lookV) > 5 || (command.lookV < -5) ){ //Same^^^
     Zspeed = -(command.lookV);
     }
     else
@@ -148,14 +151,14 @@ void loop(){
 
 // Use the phoenix code if you want pretty body rotation. :)
 
-   if((command.buttons&BUT_LT) > 0){
+/*   if((command.buttons&BUT_LT) > 0){
       bodyRotY = (((float)command.lookV))/300.0;
       bodyRotZ = ((float)command.lookH)/300.0;
       bodyRotX = ((float)command.walkH)/300.0;
       Rspeed = 0;
       Xspeed = 0;
       Yspeed = 0;
-    }
+    }*/
 
  }
 
