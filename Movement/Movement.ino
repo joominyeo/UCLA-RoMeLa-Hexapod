@@ -23,6 +23,7 @@ int d;  //distance in centimeters
 #define AMBLE_SPEED     3
 #define TRIPOD_SPEED    5
 #define MOVEMENT_SPEED  1
+#define SQUARE_SPEED    2
 
 #ifdef AX12_HEXAPOD
 #define TOP_SPEED      10
@@ -81,12 +82,6 @@ void loop(){
     if(command.buttons&BUT_R1){
       gaitSelect(RIPPLE_SMOOTH);
       multiplier=RIPPLE_SPEED;
- /*     tone(buzzer, 262, 200);
-      delay (200);
-      tone(buzzer, 294, 200);
-      delay (200);
-      tone(buzzer, 330, 200);
-      delay (200);*/
     }
     if(command.buttons&BUT_R2){
       gaitSelect(AMBLE_SMOOTH);
@@ -113,8 +108,8 @@ void loop(){
     multiplier=MOVEMENT_SPEED;
     }
     if(command.buttons&BUT_LT){
-      gaitSelect(STRUGGLE);
-      multiplier=AMBLE_SPEED;
+      gaitSelect(SQUARE_GAIT);
+      multiplier=SQUARE_SPEED;
     }
     // set movement speed
     if((command.walkV) > 5 || (command.walkV < -5) ){ //lessened the > 40 parameter
