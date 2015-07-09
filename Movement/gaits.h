@@ -83,7 +83,6 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(2*stepsInCycle);
       gaits[leg].z = 0;
       gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(2*stepsInCycle);
-
     }
   }else{//stopped
     gaits[leg].z = 0;
@@ -181,6 +180,16 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 10;
     pushSteps = 10;
     stepsInCycle = 12;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);  //1 .---- C
+    delay(150);
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    //tone(BUZZER, 262, 100);
+    //delay(150);
   }else if(GaitType == RIPPLE_SMOOTH){
     gaitGen = &SmoothGaitGen;
     gaitSetup = &DefaultGaitSetup;
@@ -193,6 +202,16 @@ void gaitSelect(int GaitType){
     pushSteps = 20;
     stepsInCycle = 24;
     tranTime = 65;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);  //2 ..--- D
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);
+    delay(150);
+    //tone(BUZZER, 294, 100);
+    //delay(150);
   }else if(GaitType == AMBLE_SMOOTH){
     gaitGen = &SmoothGaitGen;
     gaitSetup = &DefaultGaitSetup;
@@ -205,6 +224,16 @@ void gaitSelect(int GaitType){
     pushSteps = 8;
     stepsInCycle = 12;
     tranTime = 65;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);  //3 ...-- E
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    //tone(BUZZER, 330, 100);
+    //delay(150);
   }else if(GaitType == AMBLE){
     gaitGen = &DefaultGaitGen;
     gaitSetup = &DefaultGaitSetup;
@@ -216,6 +245,16 @@ void gaitSelect(int GaitType){
     gaitLegNo[LEFT_MIDDLE] = 4;
     pushSteps = 4;
     stepsInCycle = 6;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);  //4 ....- F
+    delay(150);
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);
+    delay(150);
+    //tone(BUZZER, 349, 100);
+    //delay(150);
   }else if(GaitType == TRIPOD){
     gaitGen = &DefaultGaitGen;
     gaitSetup = &DefaultGaitSetup;
@@ -228,6 +267,16 @@ void gaitSelect(int GaitType){
     pushSteps = 2;
     stepsInCycle = 4;
     tranTime = 65;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);  //5 ..... G
+    delay(150);
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    //tone(BUZZER, 392, 100);
+    //delay(150);
   }else if(GaitType == MOVEMENT){
     gaitGen = &MovementGaitGen;//???;
     gaitSetup = &DefaultGaitSetup;//???
@@ -239,6 +288,16 @@ void gaitSelect(int GaitType){
     gaitLegNo[LEFT_REAR] = 0;
     pushSteps = 0; //Is this right?
     stepsInCycle = 1;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);  //6 -.... A
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);
+    delay(150);
+    //tone(BUZZER, 440, 100);
+    //delay(150);
   }else if(GaitType == SQUARE_GAIT){
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
@@ -251,6 +310,16 @@ void gaitSelect(int GaitType){
     pushSteps = 20;
     stepsInCycle = 24;
     tranTime = 65;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);  //7 --... B
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    //tone(BUZZER, 494, 100);
+    //delay(150);
   }
   if(cycleTime == 0)
     cycleTime = (stepsInCycle*tranTime)/1000.0;

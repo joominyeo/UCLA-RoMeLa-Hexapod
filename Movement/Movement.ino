@@ -33,13 +33,10 @@ int d;  //distance in centimeters
 #define TOP_SPEED      12
 #endif
 
-//Buzzer pin
-#define buzzer         A0
-
 void setup(){
   pinMode(0,OUTPUT);
-  pinMode(buzzer, OUTPUT);
-  tone(buzzer, 262, 1000);
+  pinMode(BUZZER, OUTPUT);
+  tone(BUZZER, 262, 1000);
   // setup IK
   setupIK();
   gaitSelect(AMBLE_SMOOTH);
@@ -71,7 +68,7 @@ void loop(){
   /*v = analogRead(1);
   d = 25599*pow(v,-1.284);
   if(d<45.00)
-  {tone(buzzer, v, 100);
+  {tone(BUZZER, v, 100);
    delay(100);
  }
   else {*/

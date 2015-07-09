@@ -55,6 +55,9 @@
 #define LM_COXA 13
 #define LR_COXA 7
 
+/* The buzzer's output pin */
+#define BUZZER         A0
+
 /* A leg position request (output of body calcs, input to simple 3dof solver). */
 typedef struct{
     int x;
