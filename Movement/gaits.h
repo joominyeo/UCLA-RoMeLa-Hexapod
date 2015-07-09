@@ -22,7 +22,7 @@ extern void (*gaitSetup)();
 /* movement gait is only for all six legs simultaneously */
 #define MOVEMENT                7
 /* custom gait; RIP*/
-#define STRUGGLE                8
+#define SQUARE_GAIT                8
 
 #define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 0.05 || Rspeed < -0.05))
 /* Standard Transition time should be of the form (k*BIOLOID_FRAME_LENGTH)-1
@@ -56,6 +56,41 @@ ik_req_t MovementGaitGen(int leg){
   }
   return gaits[leg];
 }
+
+ik_req_t SquareGaitGen(int leg){
+  if( MOVING ){
+    if(step == gaitLegNo[leg]){
+      // leg up, first position
+      gaits[leg].x = 0;
+      gaits[leg].y = 0;
+      gaits[leg].z = -liftHeight;
+      gaits[leg].r = 0;
+    }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
+      // leg up, second position
+      gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      gaits[leg].z = -liftHeight;
+      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+    }else if(((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))) && (gaits[leg].z < 0)){
+      // leg down position
+      gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      gaits[leg].z = 0;
+      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+    }else{
+      // move body forward
+      gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(2*stepsInCycle);
+      gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(2*stepsInCycle);
+      gaits[leg].z = 0;
+      gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(2*stepsInCycle);
+
+    }
+  }else{//stopped
+    gaits[leg].z = 0;
+  }
+  return gaits[leg];
+}
+
 /* Simple, fast, and rough gait. Legs will make a fast triangular stroke. */
 ik_req_t DefaultGaitGen(int leg){
   if( MOVING ){
@@ -204,17 +239,18 @@ void gaitSelect(int GaitType){
     gaitLegNo[LEFT_REAR] = 0;
     pushSteps = 0; //Is this right?
     stepsInCycle = 1;
-  }else if(GaitType == STRUGGLE){
-    gaitGen = &DefaultGaitGen;
+  }else if(GaitType == SQUARE_GAIT){
+    gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
     gaitLegNo[LEFT_REAR] = 4;
-    gaitLegNo[LEFT_MIDDLE] = 2;
-    gaitLegNo[LEFT_FRONT] = 2;
-    gaitLegNo[RIGHT_REAR] = 4;
-    gaitLegNo[RIGHT_MIDDLE] = 0;
-    pushSteps = 4;
-    stepsInCycle = 6;
+    gaitLegNo[LEFT_MIDDLE] = 8;
+    gaitLegNo[LEFT_FRONT] = 12;
+    gaitLegNo[RIGHT_REAR] = 16;
+    gaitLegNo[RIGHT_MIDDLE] = 20;
+    pushSteps = 20;
+    stepsInCycle = 24;
+    tranTime = 65;
   }
   if(cycleTime == 0)
     cycleTime = (stepsInCycle*tranTime)/1000.0;
