@@ -105,13 +105,13 @@ void loop(){
       multiplier=TOP_SPEED;
     }
     if(command.buttons&BUT_RT){
-    /*  gaitSelect(MOVEMENT);
-      multiplier=MOVEMENT_SPEED; */
-     sense = sense;
+      gaitSelect(MOVEMENT);
+      multiplier=MOVEMENT_SPEED; 
+   /*  sense = sense;
       if ((millis() - time) > 200){
         sense = abs(sense - 1);
         time = millis();
-      }
+      }*/
     }
     if(command.buttons&BUT_LT){
       gaitSelect(SQUARE_GAIT);
