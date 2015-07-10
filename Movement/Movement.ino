@@ -22,6 +22,7 @@ unsigned long time = millis();
 int v;  //numerical value read from the IR Sensor
 int d;  //distance in centimeters
 int sense;
+int BUTTON = 7;
 #define RIPPLE_SPEED    1
 #define AMBLE_SPEED     3
 #define TRIPOD_SPEED    5
@@ -41,8 +42,7 @@ void setup(){
   pinMode(BUZZER, OUTPUT);
   tone(BUZZER, 262, 1000);
   pinMode(LED1, OUTPUT);
-  pinMode(sensorValue, INPUT);
-  // setup IK
+  pinMode(BUTTON, INPUT);  // setup IK
   setupIK();
   gaitSelect(AMBLE_SMOOTH);
   // setup serial
@@ -107,7 +107,7 @@ void loop(){
     }
     if(command.buttons&BUT_RT){
       gaitSelect(MOVEMENT);
-      multiplier=MOVEMENT_SPEED; 
+      multiplier=MOVEMENT_SPEED;
    /*  sense = sense;
       if ((millis() - time) > 200){
         sense = abs(sense - 1);
@@ -170,7 +170,7 @@ void loop(){
     bioloid.interpolateSetup(tranTime);
   }
   // update joints
-  bioloid.interpolateStep();
+  if (digitalRead(BUTTON) == LOW){bioloid.interpolateStep();}
   // touching the ground?
   digitalWrite(LED1, HighLow[sense]);
 
