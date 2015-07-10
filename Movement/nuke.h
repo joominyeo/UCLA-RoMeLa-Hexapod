@@ -61,6 +61,10 @@
 /* The LED's output pin and values */
 #define LED1            1
 
+#define dropSpeed 10
+#define sensorValue 7
+
+
 /* A leg position request (output of body calcs, input to simple 3dof solver). */
 typedef struct{
     int x;
@@ -104,6 +108,7 @@ extern float cycleTime;
 extern int stepsInCycle;
 extern int liftHeight;
 extern int step;
+extern ik_req_t endpoints[LEG_COUNT];
 
 /* Gait Engine */
 extern int gaitLegNo[];   // order to move legs in
@@ -113,6 +118,8 @@ extern ik_req_t gaits[];  // gait position
 int radToServo(float rads);
 /* select a gait pattern to use */
 void gaitSelect(int GaitType);
+
+extern int GaitType;
 
 #include "gaits.h"
 
