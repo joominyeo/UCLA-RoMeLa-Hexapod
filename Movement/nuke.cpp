@@ -409,7 +409,7 @@ void doIK(){
         Serial.print("LM_TIBIA FAIL: ");
         Serial.println(servo);
     }
-//    if (GaitType != SQUARE_GAIT){
+    if (tranTime == 500){
     step = (step+1)%stepsInCycle;
-//    }
+    }
 }
