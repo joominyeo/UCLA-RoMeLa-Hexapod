@@ -8,6 +8,7 @@
 int mins[] = {222, 225, 159, 164, 279, 158, 223, 229, 159, 156, 272, 155, 226, 233, 158, 157, 271, 157};
 int maxs[] = {790, 792, 855, 862, 857, 747, 788, 794, 859, 857, 860, 747, 789, 789, 858, 860, 859, 743};
 
+
 /* IK Engine */
 BioloidController bioloid = BioloidController(1000000);
 ik_req_t endpoints[LEG_COUNT];
@@ -87,7 +88,6 @@ ik_req_t bodyIK(int X, int Y, int Z, int Xdisp, int Ydisp, float Zrot){
     ans.x = totalX - int(totalX*cosG*cosA + totalY*sinB*sinG*cosA + Z*cosB*sinG*cosA - totalY*cosB*sinA + Z*sinB*sinA) + bodyPosX;
     ans.y = totalY - int(totalX*cosG*sinA + totalY*sinB*sinG*sinA + Z*cosB*sinG*sinA + totalY*cosB*cosA - Z*sinB*cosA) + bodyPosY;
     ans.z = Z - int(-totalX*sinG + totalY*sinB*cosG + Z*cosB*cosG);
-
     return ans;
 }
 
@@ -126,6 +126,11 @@ void doIK(){
     // right front leg
     gait = gaitGen(RIGHT_FRONT);
     req = bodyIK(endpoints[RIGHT_FRONT].x+gait.x, endpoints[RIGHT_FRONT].y+gait.y, endpoints[RIGHT_FRONT].z+gait.z, X_COXA, Y_COXA, gait.r);
+   /* if (( MOVING ) && (((req.z) < (endpoints[RIGHT_FRONT].z)))){
+      digitalWrite(1, HIGH);
+    }else{
+      digitalWrite(1, LOW);
+    }*/
     sol = legIK(endpoints[RIGHT_FRONT].x+req.x+gait.x,endpoints[RIGHT_FRONT].y+req.y+gait.y,endpoints[RIGHT_FRONT].z+req.z+gait.z);
     servo = 368 + sol.coxa;
     if(servo < maxs[RF_COXA-1] && servo > mins[RF_COXA-1])
