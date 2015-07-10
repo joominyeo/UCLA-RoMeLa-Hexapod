@@ -10,6 +10,7 @@
 /* find the translation of the endpoint (x,y,z) given our gait parameters */
 extern ik_req_t (*gaitGen)(int leg);
 extern void (*gaitSetup)();
+extern ik_req_t endpoints[LEG_COUNT];
 
 extern int sense;
 extern int HighLow[];
@@ -63,34 +64,44 @@ ik_req_t MovementGaitGen(int leg){
 //Basis for the sensing gait
 ik_req_t SquareGaitGen(int leg){
   if( MOVING ){
-    /*if (gaits[RIGHT_FRONT].z == 0){
-          digitalWrite(1, HIGH);
-        }else{
-          digitalWrite(1, LOW);
-        }*/
+
     if(step == gaitLegNo[leg]){
       // leg up, first position
       gaits[leg].x = 0;
       gaits[leg].y = 0;
+      //gaits[leg].z = (endpoints[leg].z - liftHeight);
       gaits[leg].z = -liftHeight;
       gaits[leg].r = 0;
     }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
       // leg up, second position
+ //     if (digitalRead(sensorValue) != HIGH){
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      //gaits[leg].z = (endpoints[leg].z - liftHeight);
       gaits[leg].z = -liftHeight;
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-    }else if(((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))) && (gaits[leg].z < 0)){
+   // }else{
+   //   endpoints[leg].z = gaits[leg].z;
+   //   step = (step+1)%stepsInCycle;
+   // }
+
+  /*  }else if((((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))) && (gaits[leg].z < 0)) /* || analogRead(leg) != [threshold value]*///){
       // leg down position
-      gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      /*gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].z = 0;
-      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle); */
+      }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
+        // leg down position
+        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+        gaits[leg].z = 0;//(gaits[leg].z + dropSpeed);
+        gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
     }else{
       // move body forward
       gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(2*stepsInCycle);
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(2*stepsInCycle);
-      gaits[leg].z = 0;
+      gaits[leg].z = 0;//endpoints[leg].z;
       gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(2*stepsInCycle);
     }
   }else{//stopped
@@ -288,8 +299,8 @@ void gaitSelect(int GaitType){
     //tone(BUZZER, 392, 100);
     //delay(150);
   }else if(GaitType == MOVEMENT){
-    gaitGen = &MovementGaitGen;//???;
-    gaitSetup = &DefaultGaitSetup;//???
+    gaitGen = &MovementGaitGen;
+    gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
     gaitLegNo[LEFT_MIDDLE] = 0;
     gaitLegNo[RIGHT_REAR] = 0;
@@ -319,7 +330,8 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 20;
     pushSteps = 20;
     stepsInCycle = 24;
-    tranTime = 130;
+    tranTime = 500;
+    liftHeight = 50;
     tone(BUZZER, 262, 100);
     delay(150);
     tone(BUZZER, 392, 100);  //7 --... B
@@ -330,6 +342,8 @@ void gaitSelect(int GaitType){
     delay(150);
     //tone(BUZZER, 494, 100);
     //delay(150);
+  } else{
+    liftHeight = 50;
   }
   if(cycleTime == 0)
     cycleTime = (stepsInCycle*tranTime)/1000.0;
