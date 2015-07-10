@@ -69,21 +69,16 @@ ik_req_t SquareGaitGen(int leg){
       // leg up, first position
       gaits[leg].x = 0;
       gaits[leg].y = 0;
-      //gaits[leg].z = (endpoints[leg].z - liftHeight);
-      gaits[leg].z = -liftHeight;
+      gaits[leg].z =  -liftHeight;
+      //gaits[leg].z = -liftHeight;
       gaits[leg].r = 0;
     }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
       // leg up, second position
- //     if (digitalRead(sensorValue) != HIGH){
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      //gaits[leg].z = (endpoints[leg].z - liftHeight);
+      gaits[leg].z = -liftHeight;
       gaits[leg].z = -liftHeight;
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-   // }else{
-   //   endpoints[leg].z = gaits[leg].z;
-   //   step = (step+1)%stepsInCycle;
-   // }
 
   /*  }else if((((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))) && (gaits[leg].z < 0)) /* || analogRead(leg) != [threshold value]*///){
       // leg down position
@@ -93,19 +88,24 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle); */
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
+        if (digitalRead(sensorValue) == LOW){
         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-        gaits[leg].z = 0;//(gaits[leg].z + dropSpeed);
+        gaits[leg].z = (gaits[leg].z + dropSpeed);
         gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+        }else{
+          endpoints[leg].z = gaits[leg].z;
+          step = (step+1)%stepsInCycle;
+        }
     }else{
       // move body forward
       gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(2*stepsInCycle);
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(2*stepsInCycle);
-      gaits[leg].z = 0;//endpoints[leg].z;
+      gaits[leg].z = endpoints[leg].z;
       gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(2*stepsInCycle);
     }
   }else{//stopped
-    gaits[leg].z = 0;
+    gaits[leg].z = endpoints[leg].z;
     //digitalWrite(1, LOW);
   }
   return gaits[leg];
