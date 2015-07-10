@@ -8,6 +8,7 @@
 int mins[] = {222, 225, 159, 164, 279, 158, 223, 229, 159, 156, 272, 155, 226, 233, 158, 157, 271, 157};
 int maxs[] = {790, 792, 855, 862, 857, 747, 788, 794, 859, 857, 860, 747, 789, 789, 858, 860, 859, 743};
 
+
 /* IK Engine */
 BioloidController bioloid = BioloidController(1000000);
 ik_req_t endpoints[LEG_COUNT];
@@ -20,8 +21,6 @@ int Xspeed;                     // forward speed (mm/s)
 int Yspeed;                     // sideward speed (mm/s)
 float Rspeed;                   // rotation speed (rad/s)
 int Zspeed;
-
-int cLeg = 0;
 
 /* Gait Engine */
 int gaitLegNo[LEG_COUNT];       // order to step through legs
@@ -410,7 +409,7 @@ void doIK(){
         Serial.print("LM_TIBIA FAIL: ");
         Serial.println(servo);
     }
-    if ((step != ((((cLeg + 1) * 4) - 2))) && (tranTime==500)){
+    if (tranTime == 500){
     step = (step+1)%stepsInCycle;
     }
 }
