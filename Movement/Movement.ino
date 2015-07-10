@@ -16,9 +16,12 @@
 Commander command = Commander();
 int multiplier;
 
+int HighLow[] = {LOW, HIGH};
+unsigned long time = millis();
+
 int v;  //numerical value read from the IR Sensor
 int d;  //distance in centimeters
-
+int sense;
 #define RIPPLE_SPEED    1
 #define AMBLE_SPEED     3
 #define TRIPOD_SPEED    5
@@ -37,6 +40,7 @@ void setup(){
   pinMode(0,OUTPUT);
   pinMode(BUZZER, OUTPUT);
   tone(BUZZER, 262, 1000);
+  pinMode(LED1, OUTPUT);
   // setup IK
   setupIK();
   gaitSelect(AMBLE_SMOOTH);
@@ -101,8 +105,13 @@ void loop(){
       multiplier=TOP_SPEED;
     }
     if(command.buttons&BUT_RT){
-    gaitSelect(MOVEMENT);
-    multiplier=MOVEMENT_SPEED;
+    /*  gaitSelect(MOVEMENT);
+      multiplier=MOVEMENT_SPEED; */
+     sense = sense;
+      if ((millis() - time) > 200){
+        sense = abs(sense - 1);
+        time = millis();
+      }
     }
     if(command.buttons&BUT_LT){
       gaitSelect(SQUARE_GAIT);
@@ -161,5 +170,8 @@ void loop(){
   }
   // update joints
   bioloid.interpolateStep();
+  // touching the ground?
+  digitalWrite(LED1, HighLow[sense]);
+
 }
 //}
