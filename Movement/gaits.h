@@ -10,6 +10,9 @@
 /* find the translation of the endpoint (x,y,z) given our gait parameters */
 extern ik_req_t (*gaitGen)(int leg);
 extern void (*gaitSetup)();
+
+extern int sense;
+extern int HighLow[];
 /* ripple gaits move one leg at a time
  *  for going forward, or turning left/right
  */
@@ -57,8 +60,14 @@ ik_req_t MovementGaitGen(int leg){
   return gaits[leg];
 }
 
+//Basis for the sensing gait
 ik_req_t SquareGaitGen(int leg){
   if( MOVING ){
+    /*if (gaits[RIGHT_FRONT].z == 0){
+          digitalWrite(1, HIGH);
+        }else{
+          digitalWrite(1, LOW);
+        }*/
     if(step == gaitLegNo[leg]){
       // leg up, first position
       gaits[leg].x = 0;
@@ -86,6 +95,7 @@ ik_req_t SquareGaitGen(int leg){
     }
   }else{//stopped
     gaits[leg].z = 0;
+    //digitalWrite(1, LOW);
   }
   return gaits[leg];
 }
@@ -309,7 +319,7 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 20;
     pushSteps = 20;
     stepsInCycle = 24;
-    tranTime = 65;
+    tranTime = 130;
     tone(BUZZER, 262, 100);
     delay(150);
     tone(BUZZER, 392, 100);  //7 --... B
