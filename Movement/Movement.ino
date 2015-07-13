@@ -158,7 +158,7 @@ void loop(){
 
 // Use the phoenix code if you want pretty body rotation. :)
 
-/*   if((command.buttons&BUT_LT) > 0){
+   /*if((command.buttons&BUT_RT) > 0){
       bodyRotY = (((float)command.lookV))/300.0;
       bodyRotZ = ((float)command.lookH)/300.0;
       bodyRotX = ((float)command.walkH)/300.0;
