@@ -70,14 +70,15 @@ ik_req_t SquareGaitGen(int leg){
       // leg up, first position
       gaits[leg].x = 0;
       gaits[leg].y = 0;
-      gaits[leg].z = (points[leg].z - liftHeight);
-      //gaits[leg].z = -liftHeight;
+      //gaits[leg].z = (points[leg].z - liftHeight);
+      gaits[leg].z = -liftHeight;
       gaits[leg].r = 0;
     }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
       // leg up, second position
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      gaits[leg].z = (points[leg].z - liftHeight);
+      //gaits[leg].z = (points[leg].z - liftHeight);
+      gaits[leg].z = -liftHeight;
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
 
   /*  }else if((((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))) && (gaits[leg].z < 0)) /* || analogRead(leg) != [threshold value]*///){
@@ -94,6 +95,7 @@ ik_req_t SquareGaitGen(int leg){
         gaits[leg].z = (gaits[leg].z + dropSpeed);
         gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         }else{
+          tone(BUZZER, 523, 100);
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
         }
@@ -188,6 +190,7 @@ int currentGait = -1;
 void gaitSelect(int GaitType){
   if(GaitType == currentGait)
     return;
+  liftHeight = 50;
   currentGait = GaitType;
   tranTime = STD_TRANSITION;
   cycleTime = 0;
@@ -323,6 +326,7 @@ void gaitSelect(int GaitType){
     //delay(150);
   }else if(GaitType == SQUARE_GAIT){
     senseGait = 1;
+    liftHeight = 60;
     cycleTime = 0;
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
