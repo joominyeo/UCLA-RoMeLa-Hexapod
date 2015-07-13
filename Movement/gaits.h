@@ -65,9 +65,9 @@ ik_req_t MovementPlaneGen(int leg){
 ik_req_t MovementRotGen(int leg){
   if( MOVING ){
     if (step == gaitLegNo[leg]){
-    bodyRotX += (Xspeed/16);
-    bodyRotY += (Yspeed/16);
-    bodyRotZ += ((Rspeed*50)/16);
+    bodyRotX += (Xspeed/50);
+    bodyRotY += (Yspeed/50);
+    bodyRotZ += (Rspeed/100);
   }
 }else{
     
