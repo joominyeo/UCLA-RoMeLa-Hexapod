@@ -64,7 +64,6 @@
 #define dropSpeed 10
 #define sensorValue 7
 
-
 /* A leg position request (output of body calcs, input to simple 3dof solver). */
 typedef struct{
     int x;
