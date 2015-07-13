@@ -105,14 +105,19 @@ void loop(){
       gaitSelect(TRIPOD);
       multiplier=TOP_SPEED;
     }
-    if(command.buttons&BUT_RT){
-      gaitSelect(MOVEMENT);
-      multiplier=MOVEMENT_SPEED; 
-   /*  sense = sense;
-      if ((millis() - time) > 200){
+    if(command.buttons&BUT_RT){ 
+      sense = sense;
+      if ((millis() - time) > 1000){
         sense = abs(sense - 1);
         time = millis();
-      }*/
+      }
+        if (sense == 0){
+         gaitSelect(MOVEMENT_PLANE);
+         multiplier=MOVEMENT_SPEED;
+        }else{
+         gaitSelect(MOVEMENT_ROT);
+         multiplier=MOVEMENT_SPEED;
+        }
     }
     if(command.buttons&BUT_LT){
       gaitSelect(SQUARE_GAIT);
@@ -172,7 +177,6 @@ void loop(){
   // update joints
   bioloid.interpolateStep();
   // touching the ground?
-  digitalWrite(LED1, HighLow[sense]);
-
+ // digitalWrite(qa, HighLow[sense]);
 }
 //}
