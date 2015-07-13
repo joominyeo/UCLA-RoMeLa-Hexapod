@@ -24,7 +24,7 @@ float Rspeed;                   // rotation speed (rad/s)
 int Zspeed;
 
 int senseGait = 0;
-
+int downMove = 0;
 
 /* Gait Engine */
 int gaitLegNo[LEG_COUNT];       // order to step through legs
@@ -413,7 +413,7 @@ void doIK(){
         Serial.print("LM_TIBIA FAIL: ");
         Serial.println(servo);
     }
-    if (((step != 2) && (step != 6) && (step != 10) && (step != 14) && (step != 18) && (step != 22) && ( senseGait == 1)) || (senseGait == 0)){
+    if (((downMove == 0) && ( senseGait == 1)) || (senseGait == 0)){
     step = (step+1)%stepsInCycle;
     }
 }
