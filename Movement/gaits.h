@@ -13,6 +13,7 @@ extern void (*gaitSetup)();
 extern ik_req_t endpoints[LEG_COUNT];
 
 extern int senseGait;
+extern int downMove;
 
 extern int sense;
 extern int HighLow[];
@@ -26,9 +27,11 @@ extern int HighLow[];
 /* tripod gaits are only for hexapods */
 #define TRIPOD                  6
 /* movement gait is only for all six legs simultaneously */
-#define MOVEMENT                7
+#define MOVEMENT_PLANE          7
+#define MOVEMENT_ROT            8
+
 /* custom gait; RIP*/
-#define SQUARE_GAIT                8
+#define SQUARE_GAIT             9
 
 #define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 0.05 || Rspeed < -0.05))
 /* Standard Transition time should be of the form (k*BIOLOID_FRAME_LENGTH)-1
@@ -44,21 +47,30 @@ void DefaultGaitSetup(){
     // nothing!
 }
 /*For moving all 6 legs simultaneously*/
-ik_req_t MovementGaitGen(int leg){
+ik_req_t MovementPlaneGen(int leg){
   if( MOVING ){
     if (step == gaitLegNo[leg]){
-    gaits[leg].x = -((Xspeed) * 2);
+    bodyPosX += (Xspeed/16);
+    bodyPosY += (Yspeed/16);
+      /*gaits[leg].x = -((Xspeed) * 2);
     gaits[leg].y = -((Yspeed) * 2);
-    gaits[leg].z = Zspeed;
+    gaits[leg].z = Zspeed;*/
   }
 }else{
-    //gaits[leg].x = 0;
-    //gaits[leg].y = 0;
-    //gaits[leg].z = 0;
-    gaits[leg].x -= (sq(abs(gaits[leg].x)) / gaits[leg].x) / 1.1;
-    gaits[leg].y -= (sq(abs(gaits[leg].y)) / gaits[leg].y) / 1.1;
-    gaits[leg].z -= (sq(abs(gaits[leg].z)) / gaits[leg].z) / 1.1;
-    delay(3);
+    
+  }
+  return gaits[leg];
+}
+
+ik_req_t MovementRotGen(int leg){
+  if( MOVING ){
+    if (step == gaitLegNo[leg]){
+    bodyRotX += (Xspeed/16);
+    bodyRotY += (Yspeed/16);
+    bodyRotZ += ((Rspeed*50)/16);
+  }
+}else{
+    
   }
   return gaits[leg];
 }
@@ -89,18 +101,20 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle); */
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
-        if (digitalRead(sensorValue) == LOW){
+        if (digitalRead(sensorValue) == LOW){        
+        downMove = 1;
         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         gaits[leg].z = (gaits[leg].z + dropSpeed);
         gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         }else{
+          downMove = 0;
           tone(BUZZER, 523, 100);
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
         }
     }else{
-      if ((step != 2) && (step != 6) && (step != 10) && (step != 14) && (step != 18) && (step != 22)){
+      if (downMove == 0){
       // move body forward
       gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(2*stepsInCycle);
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(2*stepsInCycle);
@@ -303,8 +317,8 @@ void gaitSelect(int GaitType){
     delay(150);
     //tone(BUZZER, 392, 100);
     //delay(150);
-  }else if(GaitType == MOVEMENT){
-    gaitGen = &MovementGaitGen;
+  }else if(GaitType == MOVEMENT_PLANE){
+    gaitGen = &MovementPlaneGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
     gaitLegNo[LEFT_MIDDLE] = 0;
@@ -314,6 +328,8 @@ void gaitSelect(int GaitType){
     gaitLegNo[LEFT_REAR] = 0;
     pushSteps = 0; //Is this right?
     stepsInCycle = 1;
+   // bodyPosX = 0;
+   // bodyPosY = 0;
     tone(BUZZER, 262, 100);
     delay(150);
     tone(BUZZER, 392, 100);  //6 -.... A
@@ -321,6 +337,30 @@ void gaitSelect(int GaitType){
     tone(BUZZER, 392, 100);
     delay(150);
     tone(BUZZER, 262, 100);
+    delay(150);
+    //tone(BUZZER, 440, 100);
+    //delay(150);
+  }else if(GaitType == MOVEMENT_ROT){
+    gaitGen = &MovementRotGen;
+    gaitSetup = &DefaultGaitSetup;
+    gaitLegNo[RIGHT_FRONT] = 0;
+    gaitLegNo[LEFT_MIDDLE] = 0;
+    gaitLegNo[RIGHT_REAR] = 0;
+    gaitLegNo[LEFT_FRONT] = 0;
+    gaitLegNo[RIGHT_MIDDLE] = 0;
+    gaitLegNo[LEFT_REAR] = 0;
+    pushSteps = 0; //Is this right?
+    stepsInCycle = 1;
+   // bodyRotX = 0;
+   // bodyRotY = 0;
+   // bodyRotZ = 0;
+    tone(BUZZER, 262, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);  //7 -.... A
+    delay(150);
+    tone(BUZZER, 392, 100);
+    delay(150);
+    tone(BUZZER, 392, 100);
     delay(150);
     //tone(BUZZER, 440, 100);
     //delay(150);
@@ -338,7 +378,7 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 20;
     pushSteps = 20;
     stepsInCycle = 24;
-    tranTime = 260;  
+    tranTime = 130;  
     points[RIGHT_FRONT].x = 52;
     points[RIGHT_FRONT].y = 118;
     points[RIGHT_FRONT].z = 0;
@@ -363,13 +403,13 @@ void gaitSelect(int GaitType){
     points[LEFT_REAR].y = -118;
     points[LEFT_REAR].z = 0;
 
+    tone(BUZZER, 392, 100);
+    delay(150);
+    tone(BUZZER, 262, 100);  //8 --... B
+    delay(150);
     tone(BUZZER, 262, 100);
     delay(150);
-    tone(BUZZER, 392, 100);  //7 --... B
-    delay(150);
-    tone(BUZZER, 392, 100);
-    delay(150);
-    tone(BUZZER, 392, 100);
+    tone(BUZZER, 262, 100);
     delay(150);
     //tone(BUZZER, 494, 100);
     //delay(150);
