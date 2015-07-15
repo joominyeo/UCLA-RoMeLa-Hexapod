@@ -36,6 +36,10 @@ int tranTime;
 int liftHeight;
 float cycleTime;                // cycle time in seconds (adjustment from speed to step-size)
 
+int offsetY = 0;
+int offsetX = 0;
+int offsetDirection[] = {1, 1, -1, -1, 1, -1};
+
 /* Setup the starting positions of the legs. */
 void setupIK(){
   endpoints[RIGHT_FRONT].x = 52;
