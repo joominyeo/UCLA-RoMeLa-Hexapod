@@ -15,6 +15,11 @@ extern ik_req_t endpoints[LEG_COUNT];
 extern int senseGait;
 extern int downMove;
 
+extern int offsetY;
+extern int offsetX;
+#define maxOffset   40
+extern int offsetDirection[];
+
 extern int sense;
 extern int HighLow[];
 /* ripple gaits move one leg at a time
@@ -50,14 +55,14 @@ void DefaultGaitSetup(){
 ik_req_t MovementPlaneGen(int leg){
   if( MOVING ){
     if (step == gaitLegNo[leg]){
-    bodyPosX += (Xspeed/16);
-    bodyPosY += (Yspeed/16);
+    bodyPosX -= (Xspeed/16);
+    bodyPosY -= (Yspeed/16);
       /*gaits[leg].x = -((Xspeed) * 2);
     gaits[leg].y = -((Yspeed) * 2);
     gaits[leg].z = Zspeed;*/
   }
 }else{
-    
+
   }
   return gaits[leg];
 }
@@ -70,7 +75,7 @@ ik_req_t MovementRotGen(int leg){
     bodyRotZ += (Rspeed/100);
   }
 }else{
-    
+
   }
   return gaits[leg];
 }
@@ -80,33 +85,33 @@ ik_req_t SquareGaitGen(int leg){
    if( MOVING ){
     if(step == gaitLegNo[leg]){
       // leg up, first position
-      gaits[leg].x = 0;
-      gaits[leg].y = 0;
-      //gaits[leg].z = (points[leg].z - liftHeight);
+      gaits[leg].x = gaits[leg].x;
+      gaits[leg].y = gaits[leg].y;
       gaits[leg].z = -liftHeight;
       gaits[leg].r = 0;
     }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
       // leg up, second position
+      offsetX = 0;
+      offsetY = 0;
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      //gaits[leg].z = (points[leg].z - liftHeight);
       gaits[leg].z = -liftHeight;
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-
-  /*  }else if((((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))) && (gaits[leg].z < 0)) /* || analogRead(leg) != [threshold value]*///){
-      // leg down position
-      /*gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      gaits[leg].z = 0;
-      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle); */
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
-        if (digitalRead(sensorValue) == LOW){        
+        if (digitalRead(sensorValue) == LOW){
         downMove = 1;
-        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + offsetX;
+        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
         gaits[leg].z = (gaits[leg].z + dropSpeed);
         gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+        if (gaits[leg].z > liftHeight - 10){
+          gaits[leg].z = -liftHeight;
+          //offsetX += (floor((offsetY/maxOffset) + (10/maxOffset))*10); works mathematically, but not here
+          offsetY = (offsetY+10)%(maxOffset);
+          offsetX += (abs(ceil(offsetY/maxOffset) - 1) * 10); //Verified to work mathematically; if the y offset reaches its max, then the x offset will increase by 10 and the cycle will restart
+          //maybe change the max offset by -10 every time the leg moves, that way the gait steps in a triangular pattern rather than a rectangular one
+        }
         }else{
           downMove = 0;
           tone(BUZZER, 523, 100);
@@ -116,15 +121,14 @@ ik_req_t SquareGaitGen(int leg){
     }else{
       if (downMove == 0){
       // move body forward
-      gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(2*stepsInCycle);
-      gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(2*stepsInCycle);
+      gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(4*stepsInCycle);
+      gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle);
       gaits[leg].z = points[leg].z;
-      gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(2*stepsInCycle);
+      gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle);
       }
     }
   }else{//stopped
-    gaits[leg].z = points[leg].z;
-    //digitalWrite(1, LOW);
+    points[leg].z = gaits[leg].z;
   }
   return gaits[leg];
 }
@@ -378,7 +382,7 @@ void gaitSelect(int GaitType){
     gaitLegNo[RIGHT_MIDDLE] = 20;
     pushSteps = 20;
     stepsInCycle = 24;
-    tranTime = 130;  
+    tranTime = 130;
     points[RIGHT_FRONT].x = 52;
     points[RIGHT_FRONT].y = 118;
     points[RIGHT_FRONT].z = 0;
