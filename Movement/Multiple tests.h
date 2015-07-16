@@ -64,9 +64,9 @@ ik_req_t SquareGaitGen(int leg){
 
 //Off course? Turn a little bit and get straight. Rather than stopping, continuously shift direction
 
-int direction = [initial compass degrees or whatever];
+int direction = [initial direction];
 
-Rspeed = (abs(direction - [current compass direction]) / (direction - [current compass direction])) * (1 / 20); //just plug this into the movement function
+Rspeed = (abs(direction - [current direction]) / (direction - [current direction])) * (1 / 20); //just plug this into the movement function
 /*
 if (([current compass direction] > (direction + 5)) || ([current compass direction] < (direction - 5))){
   Xspeed = 0;
