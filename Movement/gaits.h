@@ -20,6 +20,12 @@ extern int offsetX;
 #define maxOffset   40
 extern int offsetDirection[];
 
+extern int leftZ;
+extern int leftY;
+extern int rightZ;
+extern int rightY;
+extern int rollAngle;
+
 extern int sense;
 extern int HighLow[];
 /* ripple gaits move one leg at a time
@@ -208,7 +214,7 @@ int currentGait = -1;
 void gaitSelect(int GaitType){
   if(GaitType == currentGait)
     return;
-  liftHeight = 50;
+  liftHeight = 70;
   currentGait = GaitType;
   tranTime = STD_TRANSITION;
   cycleTime = 0;
@@ -300,16 +306,16 @@ void gaitSelect(int GaitType){
     //tone(BUZZER, 349, 100);
     //delay(150);
   }else if(GaitType == TRIPOD){
-    gaitGen = &DefaultGaitGen;
+    gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
     gaitLegNo[LEFT_MIDDLE] = 0;
     gaitLegNo[RIGHT_REAR] = 0;
-    gaitLegNo[LEFT_FRONT] = 2;
-    gaitLegNo[RIGHT_MIDDLE] = 2;
-    gaitLegNo[LEFT_REAR] = 2;
-    pushSteps = 2;
-    stepsInCycle = 4;
+    gaitLegNo[LEFT_FRONT] = 4;
+    gaitLegNo[RIGHT_MIDDLE] = 4;
+    gaitLegNo[LEFT_REAR] = 4;
+    pushSteps = 4;
+    stepsInCycle = 8;
     tranTime = 65;
     tone(BUZZER, 262, 100);
     delay(150);
@@ -369,43 +375,21 @@ void gaitSelect(int GaitType){
     //tone(BUZZER, 440, 100);
     //delay(150);
   }else if(GaitType == SQUARE_GAIT){
+    bodyPosX = -60;
     senseGait = 1;
     liftHeight = 60;
     cycleTime = 0;
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
-    gaitLegNo[LEFT_REAR] = 4;
-    gaitLegNo[LEFT_MIDDLE] = 8;
+    gaitLegNo[LEFT_REAR] = 20;
+    gaitLegNo[LEFT_MIDDLE] = 16;
     gaitLegNo[LEFT_FRONT] = 12;
-    gaitLegNo[RIGHT_REAR] = 16;
-    gaitLegNo[RIGHT_MIDDLE] = 20;
+    gaitLegNo[RIGHT_REAR] = 8;
+    gaitLegNo[RIGHT_MIDDLE] = 4;
     pushSteps = 20;
     stepsInCycle = 24;
-    tranTime = 130;
-    points[RIGHT_FRONT].x = 52;
-    points[RIGHT_FRONT].y = 118;
-    points[RIGHT_FRONT].z = 0;
-
-    points[RIGHT_REAR].x = -52;
-    points[RIGHT_REAR].y = 118;
-    points[RIGHT_REAR].z = 0;
-
-    points[RIGHT_MIDDLE].x = 0;
-    points[RIGHT_MIDDLE].y = 118;
-    points[RIGHT_MIDDLE].z = 0;
-
-    points[LEFT_MIDDLE].x = 0;
-    points[LEFT_MIDDLE].y = -118;
-    points[LEFT_MIDDLE].z = 0;
-
-    points[LEFT_FRONT].x = 52;
-    points[LEFT_FRONT].y = -118;
-    points[LEFT_FRONT].z = 0;
-
-    points[LEFT_REAR].x = -52;
-    points[LEFT_REAR].y = -118;
-    points[LEFT_REAR].z = 0;
+    tranTime = 65;
 
     tone(BUZZER, 392, 100);
     delay(150);
