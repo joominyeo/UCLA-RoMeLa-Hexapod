@@ -62,11 +62,12 @@ ik_req_t SquareGaitGen(int leg){
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
-//Off course? Turn a little bit and get straight.
+//Off course? Turn a little bit and get straight. Rather than stopping, continuously shift direction
 
-//set the current
 int direction = [initial compass degrees or whatever];
 
+Rspeed = (abs(direction - [current compass direction]) / (direction - [current compass direction])) * (1 / 20); //just plug this into the movement function
+/*
 if (([current compass direction] > (direction + 5)) || ([current compass direction] < (direction - 5))){
   Xspeed = 0;
   Rspeed = (abs(direction - [current compass direction]) / (direction - [current compass direction])) * (1 / 20);
@@ -75,7 +76,7 @@ else{
   Rspeed = 0;
   Xspeed = 125;
   //run the rest of the movement code
-}
+}*/
 ------------------------------------------------------------------------------------------------------------------------------------
 
 //legs higher than others? adjust the body angle
@@ -109,7 +110,7 @@ int rollCalc(){
   leftY = (gaits[LEFT_FRONT].y + gaits[LEFT_MIDDLE].y + gaits[LEFT_REAR].y)/3;
   rightZ = (gaits[RIGHT_FRONT].z + gaits[RIGHT_MIDDLE].z + gaits[RIGHT_REAR].z)/3;
   rightY = (gaits[RIGHT_FRONT].y + gaits[RIGHT_MIDDLE].y + gaits[RIGHT_REAR].y)/3;
-  rollAngle = (abs(atan2(leftZ, leftY)) + abs(atan2(leftZ, leftY)))/2)
+  rollAngle = (atan2(leftZ - rightZ, leftY - rightY));
   return rollAngle;
 }
 
@@ -201,3 +202,12 @@ if (([current compass direction] > (direction + 5)) || ([current compass directi
     return gaits[leg];
   }
 }
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+//set the body rotation angle to the opposite of that which the IMU reads
+//e.g. the IMU reads 8 degrees of roll, so the bodyRotX will change by -8 degrees.
+//e.g. the IMU reads 34 degrees of pitch, so the bodyRotY will change by -34 degrees.
+bodyRotX -= [RollIMU * 3.141592654 / 180];
+bodyRotY -= [PitchIMU * 3.141592654 / 180];
+//depending on the roll/pitch/yaw side, add tan(theta)/2 to the lower and subtract the same to the : maybe in doIK()
