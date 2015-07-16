@@ -13,8 +13,8 @@ BioloidController bioloid = BioloidController(1000000);
 ik_req_t points[LEG_COUNT];
 ik_req_t endpoints[LEG_COUNT];
 
-float bodyRotX = 0;             // body roll (rad)
-float bodyRotY = 0;             // body pitch (rad)
+float bodyRotX = 0; //(3.141592654/16);             // body roll (rad) --- pos == right down
+float bodyRotY = 0; //(3.141592654/8);             // body pitch (rad) --- pos == front up
 float bodyRotZ = 0;             // body rotation (rad)
 int bodyPosX = 0;               // body offset (mm)
 int bodyPosY = 0;               // body offset (mm)
@@ -25,6 +25,12 @@ int Zspeed;
 
 int senseGait = 0;
 int downMove = 0;
+
+int leftZ;
+int leftY;
+int rightZ;
+int rightY;
+int rollAngle;
 
 /* Gait Engine */
 int gaitLegNo[LEG_COUNT];       // order to step through legs
@@ -42,6 +48,30 @@ int offsetDirection[] = {1, 1, -1, -1, 1, -1};
 
 /* Setup the starting positions of the legs. */
 void setupIK(){
+      points[RIGHT_FRONT].x = 52;
+    points[RIGHT_FRONT].y = 118;
+    points[RIGHT_FRONT].z = 0;
+
+    points[RIGHT_REAR].x = -52;
+    points[RIGHT_REAR].y = 118;
+    points[RIGHT_REAR].z = 0;
+
+    points[RIGHT_MIDDLE].x = 0;
+    points[RIGHT_MIDDLE].y = 118;
+    points[RIGHT_MIDDLE].z = 0;
+
+    points[LEFT_MIDDLE].x = 0;
+    points[LEFT_MIDDLE].y = -118;
+    points[LEFT_MIDDLE].z = 0;
+
+    points[LEFT_FRONT].x = 52;
+    points[LEFT_FRONT].y = -118;
+    points[LEFT_FRONT].z = 0;
+
+    points[LEFT_REAR].x = -52;
+    points[LEFT_REAR].y = -118;
+    points[LEFT_REAR].z = 0;
+
   endpoints[RIGHT_FRONT].x = 52;
   endpoints[RIGHT_FRONT].y = 118;
   endpoints[RIGHT_FRONT].z = 97;
