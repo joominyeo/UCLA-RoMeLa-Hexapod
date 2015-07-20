@@ -101,7 +101,8 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
-        if (digitalRead(sensorValue) == LOW){
+      //  if (digitalRead(sensorValue) == LOW){
+        if (sense == 0){
         downMove = 1;
         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + offsetX;
         gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
@@ -112,9 +113,14 @@ ik_req_t SquareGaitGen(int leg){
           //offsetX += (floor((offsetY/maxOffset) + (10/maxOffset))*10); works mathematically, but not here
           offsetY = (offsetY+10)%(maxOffset);
           offsetX += (abs(ceil(offsetY/maxOffset) - 1) * 10); //Verified to work mathematically; if the y offset reaches its max, then the x offset will increase by 10 and the cycle will restart
+          if (offsetX == 40){ //if the leg goes past a certain point and still doesn't touch the ground, then it goes back to where it started
+            offsetX = 0;
+            offsetY = 0;
+          }
           //maybe change the max offset by -10 every time the leg moves, that way the gait steps in a triangular pattern rather than a rectangular one
         }
         }else{
+          sense = 0;
           downMove = 0;
           tone(BUZZER, 523, 100);
           points[leg].z = gaits[leg].z;
@@ -373,7 +379,7 @@ void gaitSelect(int GaitType){
   }else if(GaitType == SQUARE_GAIT){
     bodyPosX = -60;
     senseGait = 1;
-    liftHeight = 60;
+    liftHeight = 65;
     cycleTime = 0;
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
