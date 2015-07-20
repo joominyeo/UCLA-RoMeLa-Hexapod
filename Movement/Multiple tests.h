@@ -67,16 +67,6 @@ ik_req_t SquareGaitGen(int leg){
 int direction = [initial direction];
 
 Rspeed = (abs(direction - [current direction]) / (direction - [current direction])) * (1 / 20); //just plug this into the movement function
-/*
-if (([current compass direction] > (direction + 5)) || ([current compass direction] < (direction - 5))){
-  Xspeed = 0;
-  Rspeed = (abs(direction - [current compass direction]) / (direction - [current compass direction])) * (1 / 20);
-}
-else{
-  Rspeed = 0;
-  Xspeed = 125;
-  //run the rest of the movement code
-}*/
 ------------------------------------------------------------------------------------------------------------------------------------
 
 //legs higher than others? adjust the body angle
@@ -208,6 +198,7 @@ if (([current compass direction] > (direction + 5)) || ([current compass directi
 //set the body rotation angle to the opposite of that which the IMU reads
 //e.g. the IMU reads 8 degrees of roll, so the bodyRotX will change by -8 degrees.
 //e.g. the IMU reads 34 degrees of pitch, so the bodyRotY will change by -34 degrees.
-bodyRotX -= [RollIMU * 3.141592654 / 180];
-bodyRotY -= [PitchIMU * 3.141592654 / 180];
+bodyRotX -= [initial roll] - [RollIMU];
+bodyRotY -= [initial pitch] - [PitchIMU];
+//convert to radians if necessary
 //depending on the roll/pitch/yaw side, add tan(theta)/2 to the lower and subtract the same to the : maybe in doIK()
