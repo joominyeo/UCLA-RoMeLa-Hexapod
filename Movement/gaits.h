@@ -28,6 +28,9 @@ extern int rollAngle;
 
 extern int sense;
 extern int HighLow[];
+
+extern int totalSteps;
+
 /* ripple gaits move one leg at a time
  *  for going forward, or turning left/right
  */
@@ -122,6 +125,7 @@ ik_req_t SquareGaitGen(int leg){
           tone(BUZZER, 523, 100);
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
+          totalSteps ++;
         }
     }else{
       if (downMove == 0){

@@ -26,6 +26,8 @@ int Zspeed;
 int senseGait = 0;
 int downMove = 0;
 
+int totalSteps = 0;
+
 int leftZ;
 int leftY;
 int rightZ;
@@ -449,5 +451,6 @@ void doIK(){
     }
     if (((downMove == 0) && ( senseGait == 1)) || (senseGait == 0)){
     step = (step+1)%stepsInCycle;
+    totalSteps ++;
     }
 }
