@@ -27,6 +27,7 @@ ik_req_t SquareGaitGen(int leg){
         // leg down position
         if (digitalRead(senseNum[leg]) < thresholdValue){
         downMove = 1;
+        digitalWrite(leg, LOW);
         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + offsetX;
         gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
         gaits[leg].z = (gaits[leg].z + dropSpeed);
@@ -41,6 +42,7 @@ ik_req_t SquareGaitGen(int leg){
         }else{
           downMove = 0;
           tone(BUZZER, 523, 100);
+          digitalWrite(leg, HIGH);
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
         }
