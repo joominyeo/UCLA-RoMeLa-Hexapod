@@ -23,9 +23,11 @@ int Yspeed;                     // sideward speed (mm/s)
 float Rspeed;                   // rotation speed (rad/s)
 int Zspeed;
 
+//decides which gait is currently in use
 int senseGait = 0;
 int downMove = 0;
 
+//counts the total number of steps
 int totalSteps = 0;
 
 int leftZ;
@@ -44,9 +46,13 @@ int tranTime;
 int liftHeight;
 float cycleTime;                // cycle time in seconds (adjustment from speed to step-size)
 
+//searching pattern variables for the leg down phase
 int offsetY = 0;
 int offsetX = 0;
 int offsetDirection[] = {1, 1, -1, -1, 1, -1};
+
+//define the variable values for each leg's input
+int senseNum[] = {A1, A2, A3, A4, A5, A6};
 
 /* Setup the starting positions of the legs. */
 void setupIK(){

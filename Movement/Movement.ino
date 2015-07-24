@@ -35,13 +35,17 @@ int sense;
 #ifdef AX18_HEXAPOD
 #define TOP_SPEED      12
 #endif
-
+extern int senseNum[];
 void setup(){
   pinMode(0,OUTPUT);
   pinMode(BUZZER, OUTPUT);
   tone(BUZZER, 262, 1000);
   pinMode(LED1, OUTPUT);
   pinMode(sensorValue, INPUT);
+  for(int x = 0; x < 6; x++){
+    pinMode(senseNum[x], INPUT); //for the FSRs
+    pinMode(x, OUTPUT); //for the LEDs
+  }
   // setup IK
   setupIK();
   gaitSelect(AMBLE_SMOOTH);

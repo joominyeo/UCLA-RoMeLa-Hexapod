@@ -14,6 +14,7 @@ extern ik_req_t endpoints[LEG_COUNT];
 
 extern int senseGait;
 extern int downMove;
+#define thresholdValue  10
 
 extern int offsetY;
 extern int offsetX;
@@ -67,8 +68,8 @@ ik_req_t MovementPlaneGen(int leg){
     bodyPosX -= (Xspeed/16);
     bodyPosY -= (Yspeed/16);
       /*gaits[leg].x = -((Xspeed) * 2);
-    gaits[leg].y = -((Yspeed) * 2);
-    gaits[leg].z = Zspeed;*/
+    gaits[leg].y = -((Yspeed) * 2);*/
+    gaits[leg].z = Zspeed;
   }
 }else{
 
@@ -217,7 +218,7 @@ int currentGait = -1;
 void gaitSelect(int GaitType){
   if(GaitType == currentGait)
     return;
-  liftHeight = 70;
+  liftHeight = 50;
   currentGait = GaitType;
   tranTime = STD_TRANSITION;
   cycleTime = 0;
@@ -309,16 +310,16 @@ void gaitSelect(int GaitType){
     //tone(BUZZER, 349, 100);
     //delay(150);
   }else if(GaitType == TRIPOD){
-    gaitGen = &SquareGaitGen;
+    gaitGen = &DefaultGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
     gaitLegNo[LEFT_MIDDLE] = 0;
     gaitLegNo[RIGHT_REAR] = 0;
-    gaitLegNo[LEFT_FRONT] = 4;
-    gaitLegNo[RIGHT_MIDDLE] = 4;
-    gaitLegNo[LEFT_REAR] = 4;
-    pushSteps = 4;
-    stepsInCycle = 8;
+    gaitLegNo[LEFT_FRONT] = 2;
+    gaitLegNo[RIGHT_MIDDLE] = 2;
+    gaitLegNo[LEFT_REAR] = 2;
+    pushSteps = 2;
+    stepsInCycle = 4;
     tranTime = 65;
     tone(BUZZER, 262, 100);
     delay(150);

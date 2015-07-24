@@ -5,8 +5,14 @@ int offsetDirection[] = {1, 1, -1, -1, 1, -1}
 int offsetY = 0;
 int offsetX = 0;
 #define maxOffset  40
-#define thresholdValue  15
+#define thresholdValue  10
 
+//this goes into the void setup() of Movement.ino
+for(int x = 0; x < 6; x++){
+  pinMode(senseNum[x], INPUT);
+}
+
+//goes into gaits.h
 ik_req_t SquareGaitGen(int leg){
    if( MOVING ){
     if(step == gaitLegNo[leg]){
@@ -25,7 +31,7 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
-        if (digitalRead(senseNum[leg]) < thresholdValue){
+        if (analogRead(senseNum[leg]) <= thresholdValue){
         downMove = 1;
         digitalWrite(leg, LOW);
         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + offsetX;
@@ -42,7 +48,7 @@ ik_req_t SquareGaitGen(int leg){
         }else{
           downMove = 0;
           tone(BUZZER, 523, 100);
-          digitalWrite(leg, HIGH);
+          digitalWrite(leg, HIGH); //Double check digital value
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
         }
