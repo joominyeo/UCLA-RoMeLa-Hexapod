@@ -14,12 +14,17 @@ extern ik_req_t endpoints[LEG_COUNT];
 
 extern int senseGait;
 extern int downMove;
-#define thresholdValue  10
 
 extern int offsetY;
 extern int offsetX;
 #define maxOffset   40
 extern int offsetDirection[];
+
+//extern int senseNum[];
+//extern int LEDNum[];
+//extern int threshold[];
+
+extern int inputs[];
 
 extern int leftZ;
 extern int leftY;
@@ -105,25 +110,26 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
-      //  if (digitalRead(sensorValue) == LOW){
-        if (sense == 0){
-        downMove = 1;
-        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
-        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
-        gaits[leg].z = (gaits[leg].z + dropSpeed);
-        gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+//        if (sense == 0){
+        if (digitalRead(inputs[leg]) != 1){
+          downMove = 1;
+          //digitalWrite(LEDNum[leg], LOW);
+          gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
+          gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
+          gaits[leg].z = (gaits[leg].z + dropSpeed);
+          gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         if (gaits[leg].z > liftHeight - 10){
           gaits[leg].z = -liftHeight;
           offsetY = (offsetY+10)%(maxOffset);
-          //offsetX += (abs(ceil((float)offsetY/maxOffset) - 1) * 10); //Verified to work mathematically; if the y offset reaches its max, then the x offset will increase by 10 and the cycle will restart
           if (offsetY == 0){
             offsetX = (offsetX+10)%(maxOffset);
           }
         }
         }else{
-          sense = 0;
+        //  sense = 0;
           downMove = 0;
           tone(BUZZER, 523, 100);
+          //digitalWrite(LEDNum[leg], HIGH); //D C D V
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
           totalSteps ++;
