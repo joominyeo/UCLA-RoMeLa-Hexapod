@@ -51,8 +51,11 @@ int offsetY = 0;
 int offsetX = 0;
 int offsetDirection[] = {1, 1, -1, -1, 1, -1};
 
-//define the variable values for each leg's input
-int senseNum[] = {A1, A2, A3, A4, A5, A6};
+//define the variable values for each leg's input (FSR) and output (LED); these values are subject to change
+//int senseNum[] = {A1, A2, A3, A4, A5, A6};
+//int LEDNum[] = {0, 1, 2, 3, 4, 5};
+//int threshold[] = {10, 10, 10, 10, 10, 10};
+int inputs[] = {2, 4, 5, 7, 3, 6};
 
 /* Setup the starting positions of the legs. */
 void setupIK(){
