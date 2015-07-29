@@ -17,8 +17,13 @@ extern int downMove;
 
 extern int offsetY;
 extern int offsetX;
-
+#define maxOffset   40
 extern int offsetDirection[];
+
+//extern int senseNum[];
+//extern int LEDNum[];
+//extern int threshold[];
+
 extern int inputs[];
 
 extern int leftZ;
@@ -44,16 +49,14 @@ extern int totalSteps;
 /* movement gait is only for all six legs simultaneously */
 #define MOVEMENT_PLANE          7
 #define MOVEMENT_ROT            8
-#define SQUARE_GAIT             9 /* custom gait; RIP*/
-#define MAX_OFFSET   40 // UPDATE THIS with description
 
+/* custom gait; RIP*/
+#define SQUARE_GAIT             9
 
 #define MOVING   ((Xspeed > 5 || Xspeed < -5) || (Yspeed > 5 || Yspeed < -5) || (Rspeed > 0.05 || Rspeed < -0.05))
-
-
 /* Standard Transition time should be of the form (k*BIOLOID_FRAME_LENGTH)-1
-   for maximal accuracy. BIOLOID_FRAME_LENGTH = 33ms, so good options include:
-   32, 65, 98, etc...
+ *  for maximal accuracy. BIOLOID_FRAME_LENGTH = 33ms, so good options include:
+ *   32, 65, 98, etc...
  */
 #define STD_TRANSITION          98   //98 for ax-12 hexapod, 32 for ax-18f
 
@@ -63,7 +66,6 @@ extern int totalSteps;
 void DefaultGaitSetup(){
     // nothing!
 }
-
 /*For moving all 6 legs simultaneously*/
 ik_req_t MovementPlaneGen(int leg){
   if( MOVING ){
@@ -80,7 +82,6 @@ ik_req_t MovementPlaneGen(int leg){
   return gaits[leg];
 }
 
-
 ik_req_t MovementRotGen(int leg){
     if (step == gaitLegNo[leg]){
     bodyRotX = (Yspeed * 3.141592654 / 500);
@@ -92,48 +93,39 @@ ik_req_t MovementRotGen(int leg){
 
 //Basis for the sensing gait
 ik_req_t SquareGaitGen(int leg){
-  if( MOVING ){
-     // first frame: UP
+   if( MOVING ){
     if(step == gaitLegNo[leg]){
       // leg up, first position
       gaits[leg].x = gaits[leg].x;
       gaits[leg].y = gaits[leg].y;
       gaits[leg].z = -liftHeight;
       gaits[leg].r = 0;
-    } 
-     
-     // second frame OR ___________ AND z leg is lifted...
-    else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
-       // leg up, second position
+    }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
+      // leg up, second position
       offsetX = 0;
       offsetY = 0;
       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       gaits[leg].z = -liftHeight;
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-    }
-      
-      // third frame OR _________ ???
-    else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
-      // leg down position
-      
-      // if no contact, move the leg down
-      if (digitalRead(inputs[leg]) == LOW){
-        downMove = 1;
-        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
-        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
-        gaits[leg].z = (gaits[leg].z + dropSpeed);
-        gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
+        // leg down position
+//        if (sense == 0){
+        if (digitalRead(inputs[leg]) != 1){
+          downMove = 1;
+          //digitalWrite(LEDNum[leg], LOW);
+          gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
+          gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
+          gaits[leg].z = (gaits[leg].z + dropSpeed);
+          gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
         if (gaits[leg].z > liftHeight - 10){
           gaits[leg].z = -liftHeight;
-          offsetY = (offsetY+10)%(MAX_OFFSET);
+          offsetY = (offsetY+10)%(maxOffset);
           if (offsetY == 0){
-            offsetX = (offsetX+10)%(MAX_OFFSET);
+            offsetX = (offsetX+10)%(maxOffset);
           }
         }
-      } 
-        //  read HIGH; we have contact
-      else{
+        }else{
         //  sense = 0;
           downMove = 0;
           tone(BUZZER, 523, 100);
@@ -141,24 +133,21 @@ ik_req_t SquareGaitGen(int leg){
           points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
           totalSteps ++;
-      }
-    } 
-    else{
-        if (downMove == 0){
-        // move body forward
-        gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(4*stepsInCycle);
-        gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle);
-        gaits[leg].z = points[leg].z;
-        gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle);
         }
+    }else{
+      if (downMove == 0){
+      // move body forward
+      gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(4*stepsInCycle);
+      gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle);
+      gaits[leg].z = points[leg].z;
+      gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle);
       }
-    } else{//stopped
+    }
+  }else{//stopped
     points[leg].z = gaits[leg].z;
   }
   return gaits[leg];
 }
-
-
 
 /* Simple, fast, and rough gait. Legs will make a fast triangular stroke. */
 ik_req_t DefaultGaitGen(int leg){
