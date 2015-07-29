@@ -118,7 +118,7 @@ ik_req_t SquareGaitGen(int leg){
           gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
           gaits[leg].z = (gaits[leg].z + dropSpeed);
           gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-        if (gaits[leg].z > liftHeight + 10){
+        if (gaits[leg].z > liftHeight - 10){
           gaits[leg].z = -liftHeight;
           offsetY = (offsetY+10)%(maxOffset);
           if (offsetY == 0){
@@ -130,7 +130,7 @@ ik_req_t SquareGaitGen(int leg){
           downMove = 0;
           tone(BUZZER, 523, 100);
           //digitalWrite(LEDNum[leg], HIGH); //D C D V
-          points[leg].z = gaits[leg].z - 20;
+          points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
           totalSteps ++;
         }
@@ -391,15 +391,15 @@ void gaitSelect(int GaitType){
     cycleTime = 0;
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
-    gaitLegNo[RIGHT_FRONT] = 16;
-    gaitLegNo[LEFT_REAR] = 12;
-    gaitLegNo[LEFT_MIDDLE] = 4;
-    gaitLegNo[LEFT_FRONT] = 0;
+    gaitLegNo[RIGHT_FRONT] = 0;
+    gaitLegNo[LEFT_REAR] = 20;
+    gaitLegNo[LEFT_MIDDLE] = 16;
+    gaitLegNo[LEFT_FRONT] = 12;
     gaitLegNo[RIGHT_REAR] = 8;
-    gaitLegNo[RIGHT_MIDDLE] = 20;
+    gaitLegNo[RIGHT_MIDDLE] = 4;
     pushSteps = 20;
     stepsInCycle = 24;
-    tranTime = 500;
+    tranTime = 65;
 
     tone(BUZZER, 392, 100);
     delay(150);
