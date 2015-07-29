@@ -51,37 +51,34 @@ int offsetY = 0;
 int offsetX = 0;
 int offsetDirection[] = {1, 1, -1, -1, 1, -1};
 
-//define the variable values for each leg's input (FSR) and output (LED); these values are subject to change
-//int senseNum[] = {A1, A2, A3, A4, A5, A6};
-//int LEDNum[] = {0, 1, 2, 3, 4, 5};
-//int threshold[] = {10, 10, 10, 10, 10, 10};
+//pins for each leg's input (FSR); these values are subject to change
 int inputs[] = {2, 4, 5, 7, 3, 6};
 
 /* Setup the starting positions of the legs. */
 void setupIK(){
-      points[RIGHT_FRONT].x = 52;
-    points[RIGHT_FRONT].y = 118;
-    points[RIGHT_FRONT].z = 0;
+  points[RIGHT_FRONT].x = 52;
+  points[RIGHT_FRONT].y = 118;
+  points[RIGHT_FRONT].z = 0;
 
-    points[RIGHT_REAR].x = -52;
-    points[RIGHT_REAR].y = 118;
-    points[RIGHT_REAR].z = 0;
+  points[RIGHT_REAR].x = -52;
+  points[RIGHT_REAR].y = 118;
+  points[RIGHT_REAR].z = 0;
 
-    points[RIGHT_MIDDLE].x = 0;
-    points[RIGHT_MIDDLE].y = 118;
-    points[RIGHT_MIDDLE].z = 0;
+  points[RIGHT_MIDDLE].x = 0;
+  points[RIGHT_MIDDLE].y = 118;
+  points[RIGHT_MIDDLE].z = 0;
 
-    points[LEFT_MIDDLE].x = 0;
-    points[LEFT_MIDDLE].y = -118;
-    points[LEFT_MIDDLE].z = 0;
+  points[LEFT_MIDDLE].x = 0;
+  points[LEFT_MIDDLE].y = -118;
+  points[LEFT_MIDDLE].z = 0;
 
-    points[LEFT_FRONT].x = 52;
-    points[LEFT_FRONT].y = -118;
-    points[LEFT_FRONT].z = 0;
+  points[LEFT_FRONT].x = 52;
+  points[LEFT_FRONT].y = -118;
+  points[LEFT_FRONT].z = 0;
 
-    points[LEFT_REAR].x = -52;
-    points[LEFT_REAR].y = -118;
-    points[LEFT_REAR].z = 0;
+  points[LEFT_REAR].x = -52;
+  points[LEFT_REAR].y = -118;
+  points[LEFT_REAR].z = 0;
 
   endpoints[RIGHT_FRONT].x = 52;
   endpoints[RIGHT_FRONT].y = 118;
@@ -162,7 +159,6 @@ ik_sol_t legIK(int X, int Y, int Z){
     ans.tibia = radToServo(acos((float)d1/(float)d2)-1.57);
 
     return ans;
-
 }
 
 void doIK(){
