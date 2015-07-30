@@ -5,7 +5,7 @@
 
 int senseNum[] = {A0, A2, A3, A5, A1, A4}; // analog pins
 int LEDNum[] = {2, 4, 5, 7, 3, 6}; // digital pins
-int threshold[] = {5, 5, 5, 5, 5, 5}; // threshold for each of the pins
+int threshold[] = {1, 1, 1, 1, 1, 1}; // threshold for each of the pins
 
 char* legs[] = {" Right Front: ", " Right Rear: ", " Left Front: ", " Left Rear: ", " Right Middle: ", " Left Middle: "};
 
@@ -24,7 +24,7 @@ void setup(){
     pinMode(LEDNum[x], OUTPUT); //for the LEDs
     pinMode(LEDNum[x] + 6, OUTPUT); //for the Arbotix
   }
-  
+
 
   Serial.begin(115200);
 
@@ -36,7 +36,7 @@ void loop(){
   // Loop Timer
   Serial.print("EXEC TIME: "); Serial.print(millis()-time);
   time = millis();
-  
+
   //
   for(int x = 0; x < 6; x++){
     // print out leg enum
@@ -45,8 +45,8 @@ void loop(){
 #ifdef SERIAL_ON
     Serial.print(legs[x]);
     Serial.print(reading);
-#endif 
-    
+#endif
+
     // if above threshold, turn on LED and send HIGH to Arbotix
     if (reading > threshold[x])
     {
