@@ -13,14 +13,10 @@
 //#define AX18_HEXAPOD
 
 Commander command = Commander();
-
-int HighLow[] = {LOW, HIGH};
-unsigned long time = millis();
-
 int multiplier;
-int v;  //numerical value read from the IR Sensor
-int d;  //distance in centimeters
-int sense;
+
+bool sense = true; //toggle variable for Movement gaits
+unsigned time = millis(); //used as a timer for the toggle
 
 #define RIPPLE_SPEED    1
 #define AMBLE_SPEED     3
@@ -40,7 +36,7 @@ void setup(){
   pinMode(0,OUTPUT);
   pinMode(BUZZER, OUTPUT);
   tone(BUZZER, 262, 1000);
-  
+
   // initialize FSR pins
   for(int x = 0; x < 6; x++){
       pinMode(inputs[x], INPUT); //for the Input from the Uno
@@ -73,13 +69,6 @@ void setup(){
 }
 
 void loop(){
-  /*v = analogRead(1);
-  d = 25599*pow(v,-1.284);
-  if(d<45.00)
-  {tone(BUZZER, v, 100);
-   delay(100);
- }
-  else {*/
   // take commands
   if(command.ReadMsgs() > 0){
     digitalWrite(0,HIGH-digitalRead(0));
@@ -108,19 +97,24 @@ void loop(){
       gaitSelect(TRIPOD);
       multiplier=TOP_SPEED;
     }
+
+    // not enough buttons on commander, so we toggle between Plane and Rotational body movement
     if(command.buttons&BUT_RT){
-      sense = sense;
-      if ((millis() - time) > 500){
-        sense = abs(sense - 1);
+
+      // wait 1 sec before toggling to prevent multiple button presses
+      if ((millis() - time) > 1000){
+        sense = !sense;
         time = millis();
       }
-      /*  if (sense == 0){
-         gaitSelect(MOVEMENT_PLANE);
-         multiplier=MOVEMENT_SPEED;
-        }else{
-         gaitSelect(MOVEMENT_ROT);
-         multiplier=MOVEMENT_SPEED;
-        }*/
+
+      // toggle between translation and rotation
+      if (sense == true){
+       gaitSelect(MOVEMENT_PLANE);
+      } else {
+       gaitSelect(MOVEMENT_ROT);
+      }
+      multiplier=MOVEMENT_SPEED;
+
     }
     if(command.buttons&BUT_LT){
       gaitSelect(SQUARE_GAIT);
@@ -135,7 +129,7 @@ void loop(){
       Xspeed = 0;
     }
 
-    if((command.walkH) > 5 || (command.walkH < -5) ){ //changed the parameters to -5<x>5
+    if((command.walkH) > 5 || (command.walkH < -5) ){ //changed the parameters to -5 < x > 5
     Yspeed = (multiplier*command.walkH)/2;
     }
     else
@@ -170,16 +164,14 @@ void loop(){
       Yspeed = 0;
     }*/
 
- }
+  }
 
   // if our previous interpolation is complete, recompute the IK
   if(bioloid.interpolating == 0){
     doIK();
     bioloid.interpolateSetup(tranTime);
   }
+
   // update joints
   bioloid.interpolateStep();
-  // touching the ground?
- // digitalWrite(qa, HighLow[sense]);
 }
-//}
