@@ -13,27 +13,19 @@ extern void (*gaitSetup)();
 extern ik_req_t endpoints[LEG_COUNT];
 
 extern int senseGait;
-extern int downMove;
+extern bool downMove;
 
 extern int offsetY;
 extern int offsetX;
-#define maxOffset   40
 extern int offsetDirection[];
 
-//extern int senseNum[];
-//extern int LEDNum[];
-//extern int threshold[];
-
-extern int inputs[];
+extern int inputs[]; //inputs from the Arduino
 
 extern int leftZ;
 extern int leftY;
 extern int rightZ;
 extern int rightY;
 extern int rollAngle;
-
-extern int sense;
-extern int HighLow[];
 
 extern int totalSteps;
 
@@ -59,6 +51,8 @@ extern int totalSteps;
  *   32, 65, 98, etc...
  */
 #define STD_TRANSITION          98   //98 for ax-12 hexapod, 32 for ax-18f
+
+#define MAX_OFFSET 40 // maximum that the leg will deviate in the x and y direction
 
 #else
 
