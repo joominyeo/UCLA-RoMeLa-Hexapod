@@ -25,10 +25,14 @@ int Zspeed;
 
 //decides which gait is currently in use
 int senseGait = 0;
-int downMove = 0;
+bool downMove = false;
 
 //counts the total number of steps
 int totalSteps = 0;
+
+int maxLift = 10; // the furthest that the foot can extend beyond the liftHeight
+int yChange = 10; // the left/right shift of each foot during the searching phase
+int xChange = 10; // the forward shift of each foot during the searching phase
 
 int leftZ;
 int leftY;
