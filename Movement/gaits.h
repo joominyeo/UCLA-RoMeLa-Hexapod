@@ -12,29 +12,23 @@ extern ik_req_t (*gaitGen)(int leg);
 extern void (*gaitSetup)();
 extern ik_req_t endpoints[LEG_COUNT];
 
+//
 extern int senseGait;
-extern int downMove;
+extern bool downMove;
 
 extern int offsetY;
 extern int offsetX;
-#define maxOffset   40
 extern int offsetDirection[];
 
-//extern int senseNum[];
-//extern int LEDNum[];
-//extern int threshold[];
 
-extern int inputs[];
+extern int inputs[]; // inputs from the Arduino
 
+//
 extern int leftZ;
 extern int leftY;
 extern int rightZ;
 extern int rightY;
 extern int rollAngle;
-
-extern int sense;
-extern int HighLow[];
-
 extern int totalSteps;
 
 /* ripple gaits move one leg at a time
@@ -59,6 +53,8 @@ extern int totalSteps;
  *   32, 65, 98, etc...
  */
 #define STD_TRANSITION          98   //98 for ax-12 hexapod, 32 for ax-18f
+
+#define MAX_OFFSET 40 // maximum that the leg will deviate in the x and y direction
 
 #else
 
@@ -94,59 +90,69 @@ ik_req_t MovementRotGen(int leg){
 //Basis for the sensing gait
 ik_req_t SquareGaitGen(int leg){
    if( MOVING ){
-    if(step == gaitLegNo[leg]){
-      // leg up, first position
-      gaits[leg].x = gaits[leg].x;
-      gaits[leg].y = gaits[leg].y;
-      gaits[leg].z = -liftHeight;
-      gaits[leg].r = 0;
-    }else if(((step == gaitLegNo[leg]+1) || (step == gaitLegNo[leg]-(stepsInCycle-1))) && (gaits[leg].z < 0)){
+     // first position; leg up
+     if(step == gaitLegNo[leg]){
+       gaits[leg].x = gaits[leg].x;
+       gaits[leg].y = gaits[leg].y;
+       gaits[leg].z = -liftHeight;
+       gaits[leg].r = 0;
+       return gaits[leg];
+     }
+     // second position; leg up and forwards
+     if((step == gaitLegNo[leg]+1) && (gaits[leg].z < 0)){
       // leg up, second position
-      offsetX = 0;
-      offsetY = 0;
-      gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      gaits[leg].z = -liftHeight;
-      gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-      }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
+       offsetX = 0;
+       offsetY = 0;
+       gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+       gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+       gaits[leg].z = -liftHeight;
+       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+       return gaits[leg];
+     }
+
+     // third position; move leg down until contact. Loops until contact is made
+     if (step == gaitLegNo[leg]+2){
         // leg down position
-//        if (sense == 0){
-        if (digitalRead(inputs[leg]) != 1){
-          downMove = 1;
-          //digitalWrite(LEDNum[leg], LOW);
-          gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
-          gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
-          gaits[leg].z = (gaits[leg].z + dropSpeed);
-          gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-        if (gaits[leg].z > liftHeight - 10){
-          gaits[leg].z = -liftHeight;
-          offsetY = (offsetY+10)%(maxOffset);
-          if (offsetY == 0){
-            offsetX = (offsetX+10)%(maxOffset);
-          }
-        }
-        }else{
-        //  sense = 0;
-          downMove = 0;
-          tone(BUZZER, 523, 100);
-          //digitalWrite(LEDNum[leg], HIGH); //D C D V
-          points[leg].z = gaits[leg].z;
+       if (digitalRead(inputs[leg]) != HIGH){
+         downMove = true;
+         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
+         gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
+         gaits[leg].z = (gaits[leg].z + dropSpeed); // keep dropping leg further and further
+         gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+
+           // if leg goes too far, reset z height and try a different position
+           if (gaits[leg].z > liftHeight + maxLift) {
+             gaits[leg].z = -liftHeight;
+             offsetY = (offsetY+yChange)%(MAX_OFFSET); // Y goes between 0 and 30, in increments of 10
+
+               if (offsetY == 0) {
+                 offsetX = (offsetX+xChange)%(MAX_OFFSET);
+               }
+           }
+       }else{
+         downMove = false;
+         tone(BUZZER, 523, 100);
+         points[leg].z = gaits[leg].z;
           step = (step+1)%stepsInCycle;
           totalSteps ++;
         }
-    }else{
-      if (downMove == 0){
+        return gaits[leg];
+     }
+
+
+    if (downMove == false){
       // move body forward
       gaits[leg].x = gaits[leg].x - (Xspeed*cycleTime)/(4*stepsInCycle);
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle);
       gaits[leg].z = points[leg].z;
       gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle);
-      }
     }
-  }else{//stopped
-    points[leg].z = gaits[leg].z;
   }
-  return gaits[leg];
+
+  else {//stopped
+    points[leg].z = gaits[leg].z;
+    return gaits[leg];
+  }
 }
 
 /* Simple, fast, and rough gait. Legs will make a fast triangular stroke. */
@@ -385,18 +391,18 @@ void gaitSelect(int GaitType){
     //tone(BUZZER, 440, 100);
     //delay(150);
   }else if(GaitType == SQUARE_GAIT){
-    bodyPosX = -60;
+    bodyPosX = 0;
     senseGait = 1;
     liftHeight = 65;
     cycleTime = 0;
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
-    gaitLegNo[RIGHT_FRONT] = 0;
-    gaitLegNo[LEFT_REAR] = 20;
-    gaitLegNo[LEFT_MIDDLE] = 16;
-    gaitLegNo[LEFT_FRONT] = 12;
-    gaitLegNo[RIGHT_REAR] = 8;
-    gaitLegNo[RIGHT_MIDDLE] = 4;
+    gaitLegNo[RIGHT_FRONT] = 12;
+    gaitLegNo[LEFT_REAR] = 8;
+    gaitLegNo[LEFT_MIDDLE] = 4;
+    gaitLegNo[LEFT_FRONT] = 0;
+    gaitLegNo[RIGHT_REAR] = 20;
+    gaitLegNo[RIGHT_MIDDLE] = 16;
     pushSteps = 20;
     stepsInCycle = 24;
     tranTime = 65;
