@@ -458,7 +458,7 @@ void doIK(){
         Serial.print("LM_TIBIA FAIL: ");
         Serial.println(servo);
     }
-    if (((downMove == 0) && ( senseGait == 1)) || (senseGait == 0)){
+    if (((downMove == false) && ( senseGait == 1)) || (senseGait == 0)){
     step = (step+1)%stepsInCycle;
     totalSteps ++;
     }
