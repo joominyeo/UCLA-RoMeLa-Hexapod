@@ -61,8 +61,7 @@
 /* The LED's output pin and values */
 #define LED1            1
 
-#define dropSpeed 10
-#define sensorValue 7
+#define DROP_SPEED 10
 
 /* A leg position request (output of body calcs, input to simple 3dof solver). */
 typedef struct{
