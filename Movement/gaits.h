@@ -104,30 +104,37 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
         // leg down position
-//        if (sense == 0){
         if (digitalRead(inputs[leg]) != 1){
           downMove = true;
-          //digitalWrite(LEDNum[leg], LOW);
           gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
           gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
           gaits[leg].z = (gaits[leg].z + dropSpeed);
           gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-        if (gaits[leg].z > liftHeight + 10){
-          gaits[leg].z = -liftHeight;
-          offsetY = (offsetY+10)%(MAX_OFFSET);
-          if (offsetY == 0){
-            offsetX = (offsetX+10)%(MAX_OFFSET);
+          if (gaits[leg].z > liftHeight + 10){
+            gaits[leg].z = -liftHeight;
+            offsetY = (offsetY+10)%(MAX_OFFSET);
+            if (offsetY == 0){
+              offsetX = (offsetX+10)%(MAX_OFFSET);
+            }
           }
-        }
         }else{
-        //  sense = 0;
-          downMove = false;
-          tone(BUZZER, 523, 100);
-          //digitalWrite(LEDNum[leg], HIGH); //D C D V
-          points[leg].z = gaits[leg].z;
+          tone(BUZZER, 262, 100);
           step = (step+1)%stepsInCycle;
-          totalSteps ++;
         }
+    }else if ((step == gaitLegNo[leg]+3) || (step == gaitLegNo[leg]-(stepsInCycle-3))){
+      if (digitalRead(inputs[leg]) == 1){
+        downMove = true;
+        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
+        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
+        gaits[leg].z = (gaits[leg].z - dropSpeed);
+        gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+      }else{
+        downMove = false;
+        tone(BUZZER, 523, 100);
+        points[leg].z = gaits[leg].z;
+        step = (step+1)%stepsInCycle;
+        totalSteps ++;
+      }
     }else{
       if (downMove == false){
       // move body forward
@@ -386,13 +393,13 @@ void gaitSelect(int GaitType){
     gaitGen = &SquareGaitGen;
     gaitSetup = &DefaultGaitSetup;
     gaitLegNo[RIGHT_FRONT] = 0;
-    gaitLegNo[LEFT_REAR] = 20;
-    gaitLegNo[LEFT_MIDDLE] = 16;
-    gaitLegNo[LEFT_FRONT] = 12;
-    gaitLegNo[RIGHT_REAR] = 8;
-    gaitLegNo[RIGHT_MIDDLE] = 4;
-    pushSteps = 20;
-    stepsInCycle = 24;
+    gaitLegNo[LEFT_REAR] = 25;
+    gaitLegNo[LEFT_MIDDLE] = 20;
+    gaitLegNo[LEFT_FRONT] = 15;
+    gaitLegNo[RIGHT_REAR] = 10;
+    gaitLegNo[RIGHT_MIDDLE] = 5;
+    pushSteps = 25;
+    stepsInCycle = 30;
     tranTime = 65;
 
     tone(BUZZER, 392, 100);
