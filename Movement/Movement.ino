@@ -15,9 +15,6 @@
 Commander command = Commander();
 int multiplier;
 
-bool sense = true; //toggle variable for Movement gaits
-unsigned time = millis(); //used as a timer for the toggle
-
 #define RIPPLE_SPEED    1
 #define AMBLE_SPEED     3
 #define TRIPOD_SPEED    5
@@ -90,31 +87,16 @@ void loop(){
       multiplier=AMBLE_SPEED;
     }
     if(command.buttons&BUT_L5){
-      gaitSelect(TRIPOD);
-      multiplier=TRIPOD_SPEED;
+      gaitSelect(MOVEMENT_ROT);
+      multiplier=MOVEMENT_SPEED;
     }
     if(command.buttons&BUT_L6){
+      gaitSelect(MOVEMENT_PLANE);
+      multiplier=MOVEMENT_SPEED;
+    }
+    if(command.buttons&BUT_RT){
       gaitSelect(TRIPOD);
       multiplier=TOP_SPEED;
-    }
-
-    // not enough buttons on commander, so we toggle between Plane and Rotational body movement
-    if(command.buttons&BUT_RT){
-
-      // wait 1 sec before toggling to prevent multiple button presses
-      if ((millis() - time) > 1000){
-        sense = !sense;
-        time = millis();
-      }
-
-      // toggle between translation and rotation
-      if (sense == true){
-       gaitSelect(MOVEMENT_PLANE);
-      } else {
-       gaitSelect(MOVEMENT_ROT);
-      }
-      multiplier=MOVEMENT_SPEED;
-
     }
     if(command.buttons&BUT_LT){
       gaitSelect(SQUARE_GAIT);
