@@ -126,7 +126,7 @@ ik_req_t SquareGaitGen(int leg){
         downMove = true;
         gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
         gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
-        gaits[leg].z = (gaits[leg].z - dropSpeed);
+        gaits[leg].z = (gaits[leg].z - (dropSpeed/10));
         gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       }else{
         downMove = false;
