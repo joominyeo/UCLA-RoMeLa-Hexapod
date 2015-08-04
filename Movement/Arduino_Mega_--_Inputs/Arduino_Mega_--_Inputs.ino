@@ -5,7 +5,7 @@
 
 int senseNum[] = {A0, A2, A3, A5, A1, A4}; // analog pins
 int LEDNum[] = {2, 4, 5, 7, 3, 6}; // digital pins
-int threshold[] = {1, 1, 1, 1, 1, 1}; // threshold for each of the pins
+int threshold[] = {1, 1, 1, 50, 1, 1}; // threshold for each of the pins
 
 char* legs[] = {" Right Front: ", " Right Rear: ", " Left Front: ", " Left Rear: ", " Right Middle: ", " Left Middle: "};
 
