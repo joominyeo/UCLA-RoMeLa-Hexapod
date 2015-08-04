@@ -142,7 +142,12 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle);
       gaits[leg].z = points[leg].z;
       gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle);
-      }
+    }else{
+      gaits[leg].x = gaits[leg].x - ((Xspeed*cycleTime)/(4*stepsInCycle)/(DROP_SPEED));
+      gaits[leg].y = gaits[leg].y - ((Yspeed*cycleTime)/(4*stepsInCycle)/(DROP_SPEED));
+      gaits[leg].z = points[leg].z;
+      gaits[leg].r = gaits[leg].r - ((Rspeed*cycleTime)/(4*stepsInCycle)/(DROP_SPEED));
+    }
     }
   }else{//stopped
     points[leg].z = gaits[leg].z;
