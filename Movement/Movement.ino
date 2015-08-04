@@ -29,6 +29,16 @@ int multiplier;
 #define TOP_SPEED      12
 #endif
 
+void clearGaits(){
+  //clear gaits[] for all legs
+  for(int i = 0; i < LEG_COUNT; i++){
+    gaits[i].x = 0;
+    gaits[i].y = 0;
+    gaits[i].z = 0;
+    gaits[i].r = 0;
+  }
+}
+
 void setup(){
   pinMode(0,OUTPUT);
   pinMode(BUZZER, OUTPUT);
@@ -95,8 +105,24 @@ void loop(){
       multiplier=MOVEMENT_SPEED;
     }
     if(command.buttons&BUT_RT){
-      gaitSelect(TRIPOD);
-      multiplier=TOP_SPEED;
+      //gaitSelect(TRIPOD);
+      //multiplier=TOP_SPEED;
+      gaitSelect(AMBLE_SMOOTH);
+      multiplier = AMBLE_SPEED;
+      clearGaits();
+      setupIK();
+      bioloid.poseSize = 18;
+      bioloid.readPose();
+      doIK();
+      bioloid.interpolateSetup(1000);
+      while(bioloid.interpolating > 0){
+        bioloid.interpolateStep();
+        delay(3);
+      }
+      senseGait = 0;
+      downMove = false;
+      totalSteps = 0;
+      step = 0;
     }
     if(command.buttons&BUT_LT){
       gaitSelect(SQUARE_GAIT);
