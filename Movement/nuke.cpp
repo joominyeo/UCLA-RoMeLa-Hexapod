@@ -31,8 +31,8 @@ bool downMove = false;
 int totalSteps = 0;
 
 int maxLift = 10; // the furthest that the foot can extend beyond the liftHeight
-int yChange = 10; // the left/right shift of each foot during the searching phase
-int xChange = 10; // the forward shift of each foot during the searching phase
+int yChange = 20; // the left/right shift of each foot during the searching phase
+int xChange = 20; // the forward shift of each foot during the searching phase
 
 int leftZ;
 int leftY;

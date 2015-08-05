@@ -52,7 +52,7 @@ extern int totalSteps;
  */
 #define STD_TRANSITION          98   //98 for ax-12 hexapod, 32 for ax-18f
 
-#define MAX_OFFSET 40 // maximum that the leg will deviate in the x and y direction
+#define MAX_OFFSET 60 // maximum that the leg will deviate in the x and y direction
 
 #else
 
@@ -103,34 +103,34 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].z = -liftHeight;
       gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
       }else if ((step == gaitLegNo[leg]+2) || (step == gaitLegNo[leg]-(stepsInCycle-2))){
-        // leg down position
+        // moves the leg down until touching the ground
         if (digitalRead(inputs[leg]) != 1){
           downMove = true;
           gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
           gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
           gaits[leg].z = (gaits[leg].z + DROP_SPEED);
           gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
-          if (gaits[leg].z > liftHeight + 10){
+          if (gaits[leg].z > liftHeight + maxLift){
             gaits[leg].z = -liftHeight;
-            offsetY = (offsetY+10)%(MAX_OFFSET);
+            offsetY = (offsetY+yChange)%(MAX_OFFSET);
             if (offsetY == 0){
-              offsetX = (offsetX+10)%(MAX_OFFSET);
+              offsetX = (offsetX+xChange)%(MAX_OFFSET);
             }
           }
         }else{
-          tone(BUZZER, 262, 100);
+          downMove = false;
+          tone(BUZZER, 262, 50);
           step = (step+1)%stepsInCycle;
         }
     }else if ((step == gaitLegNo[leg]+3) || (step == gaitLegNo[leg]-(stepsInCycle-3))){
+      //moves the leg up slowly until barely not touching the ground
       if (digitalRead(inputs[leg]) == 1){
-        downMove = true;
-        gaits[leg].x = (Xspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetX * (Xspeed/abs(Xspeed)));
-        gaits[leg].y = (Yspeed*cycleTime*pushSteps)/(4*stepsInCycle) + (offsetY * offsetDirection[leg]);
+        gaits[leg].x = (gaits[leg].x - (Xspeed*cycleTime)/(4*stepsInCycle)) + (offsetX * (Xspeed/abs(Xspeed)));
+        gaits[leg].y = (gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle)) + (offsetY * offsetDirection[leg]);
         gaits[leg].z = (gaits[leg].z - (DROP_SPEED/DROP_SPEED));
-        gaits[leg].r = (Rspeed*cycleTime*pushSteps)/(4*stepsInCycle);
+        gaits[leg].r = (gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle));
       }else{
-        downMove = false;
-        tone(BUZZER, 523, 100);
+        tone(BUZZER, 523, 50);
         points[leg].z = gaits[leg].z;
         step = (step+1)%stepsInCycle;
         totalSteps ++;
@@ -142,12 +142,7 @@ ik_req_t SquareGaitGen(int leg){
       gaits[leg].y = gaits[leg].y - (Yspeed*cycleTime)/(4*stepsInCycle);
       gaits[leg].z = points[leg].z;
       gaits[leg].r = gaits[leg].r - (Rspeed*cycleTime)/(4*stepsInCycle);
-    }else{
-      gaits[leg].x = gaits[leg].x - ((Xspeed*cycleTime)/(4*stepsInCycle)/(DROP_SPEED));
-      gaits[leg].y = gaits[leg].y - ((Yspeed*cycleTime)/(4*stepsInCycle)/(DROP_SPEED));
-      gaits[leg].z = points[leg].z;
-      gaits[leg].r = gaits[leg].r - ((Rspeed*cycleTime)/(4*stepsInCycle)/(DROP_SPEED));
-    }
+      }
     }
   }else{//stopped
     points[leg].z = gaits[leg].z;
@@ -391,7 +386,7 @@ void gaitSelect(int GaitType){
     //tone(BUZZER, 440, 100);
     //delay(150);
   }else if(GaitType == SQUARE_GAIT){
-    bodyPosX = 0;
+    bodyPosX = 20;
     senseGait = 1;
     liftHeight = 65;
     cycleTime = 0;
