@@ -34,12 +34,6 @@ int maxLift = 10; // the furthest that the foot can extend beyond the liftHeight
 int yChange = 20; // the left/right shift of each foot during the searching phase
 int xChange = 20; // the forward shift of each foot during the searching phase
 
-int leftZ;
-int leftY;
-int rightZ;
-int rightY;
-int rollAngle;
-
 /* Gait Engine */
 int gaitLegNo[LEG_COUNT];       // order to step through legs
 ik_req_t gaits[LEG_COUNT];      // gait engine output
@@ -59,31 +53,8 @@ int offsetDirection[] = {1, 1, -1, -1, 1, -1};
 int inputs[] = {2, 4, 5, 7, 3, 6};
 
 /* Setup the starting positions of the legs. */
-void setupIK(){
-  points[RIGHT_FRONT].x = 52;
-  points[RIGHT_FRONT].y = 110;
-  points[RIGHT_FRONT].z = 0;
-
-  points[RIGHT_REAR].x = -52;
-  points[RIGHT_REAR].y = 110;
-  points[RIGHT_REAR].z = 0;
-
-  points[RIGHT_MIDDLE].x = 0;
-  points[RIGHT_MIDDLE].y = 110;
-  points[RIGHT_MIDDLE].z = 0;
-
-  points[LEFT_MIDDLE].x = 0;
-  points[LEFT_MIDDLE].y = -110;
-  points[LEFT_MIDDLE].z = 0;
-
-  points[LEFT_FRONT].x = 52;
-  points[LEFT_FRONT].y = -110;
-  points[LEFT_FRONT].z = 0;
-
-  points[LEFT_REAR].x = -52;
-  points[LEFT_REAR].y = -110;
-  points[LEFT_REAR].z = 0;
-
+void setupIK()
+{
   endpoints[RIGHT_FRONT].x = 52;
   endpoints[RIGHT_FRONT].y = 110;
   endpoints[RIGHT_FRONT].z = 97;
@@ -108,6 +79,13 @@ void setupIK(){
   endpoints[LEFT_REAR].y = -110;
   endpoints[LEFT_REAR].z = 97;
 
+  points[RIGHT_FRONT] = endpoints[RIGHT_FRONT];
+  points[RIGHT_REAR] = endpoints[RIGHT_REAR];
+  points[RIGHT_MIDDLE] = endpoints[RIGHT_MIDDLE];
+  points[LEFT_MIDDLE] = endpoints[LEFT_MIDDLE];
+  points[LEFT_FRONT] = endpoints[LEFT_FRONT];
+  points[LEFT_REAR] = endpoints[LEFT_REAR];
+
   liftHeight = 50;
   stepsInCycle = 1;
   step = 0;
@@ -116,13 +94,15 @@ void setupIK(){
 #include "gaits.h"
 
 /* Convert radians to servo position offset. */
-int radToServo(float rads){
+int radToServo(float rads)
+{
   float val = (rads*100)/51 * 100;
   return (int) val;
 }
 
 /* Body IK solver: compute where legs should be. */
-ik_req_t bodyIK(int X, int Y, int Z, int Xdisp, int Ydisp, float Zrot){
+ik_req_t bodyIK(int X, int Y, int Z, int Xdisp, int Ydisp, float Zrot)
+{
     ik_req_t ans;
 
     float cosB = cos(bodyRotX);
@@ -142,7 +122,8 @@ ik_req_t bodyIK(int X, int Y, int Z, int Xdisp, int Ydisp, float Zrot){
 }
 
 /* Simple 3dof leg solver. X,Y,Z are the length from the Coxa rotate to the endpoint. */
-ik_sol_t legIK(int X, int Y, int Z){
+ik_sol_t legIK(int X, int Y, int Z)
+{
     ik_sol_t ans;
 
     // first, make this a 2DOF problem... by solving coxa
@@ -165,7 +146,8 @@ ik_sol_t legIK(int X, int Y, int Z){
     return ans;
 }
 
-void doIK(){
+void doIK()
+{
     int servo;
     ik_req_t req, gait;
     ik_sol_t sol;
@@ -175,53 +157,60 @@ void doIK(){
     // right front leg
     gait = gaitGen(RIGHT_FRONT);
     req = bodyIK(endpoints[RIGHT_FRONT].x+gait.x, endpoints[RIGHT_FRONT].y+gait.y, endpoints[RIGHT_FRONT].z+gait.z, X_COXA, Y_COXA, gait.r);
-   /* if (( MOVING ) && (((req.z) < (endpoints[RIGHT_FRONT].z)))){
-      digitalWrite(1, HIGH);
-    }else{
-      digitalWrite(1, LOW);
-    }*/
     sol = legIK(endpoints[RIGHT_FRONT].x+req.x+gait.x,endpoints[RIGHT_FRONT].y+req.y+gait.y,endpoints[RIGHT_FRONT].z+req.z+gait.z);
     servo = 368 + sol.coxa;
     if(servo < maxs[RF_COXA-1] && servo > mins[RF_COXA-1])
         bioloid.setNextPose(RF_COXA, servo);
-    else{
-          if (servo >= maxs[RF_COXA-1]){
-            servo = (maxs[RF_COXA-1] - 1);
-            bioloid.setNextPose(RF_COXA, servo);
-          }else{
-            servo = (mins[RF_COXA] + 1);
-            bioloid.setNextPose(RF_COXA, mins[RF_COXA-1] + 1);
-          }
-        Serial.print("RF_COXA FAIL: ");
-        Serial.println(servo);
+    else
+    {
+      if (servo >= maxs[RF_COXA-1])
+      {
+          servo = (maxs[RF_COXA-1] - 1);
+          bioloid.setNextPose(RF_COXA, servo);
+      }
+      else
+      {
+        servo = (mins[RF_COXA] + 1);
+        bioloid.setNextPose(RF_COXA, mins[RF_COXA-1] + 1);
+      }
+      Serial.print("RF_COXA FAIL: ");
+      Serial.println(servo);
     }
     servo = 524 + sol.femur;
     if(servo < maxs[RF_FEMUR-1] && servo > mins[RF_FEMUR-1])
         bioloid.setNextPose(RF_FEMUR, servo);
-    else{
-      if (servo >= maxs[RF_FEMUR-1]){
+    else
+    {
+      if (servo >= maxs[RF_FEMUR-1])
+      {
         servo = (maxs[RF_FEMUR-1] - 1);
         bioloid.setNextPose(RF_FEMUR, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RF_FEMUR] + 1);
         bioloid.setNextPose(RF_FEMUR, mins[RF_FEMUR-1] + 1);
       }
-        Serial.print("RF_FEMUR FAIL: ");
-        Serial.println(servo);
+      Serial.print("RF_FEMUR FAIL: ");
+      Serial.println(servo);
     }
     servo = 354 + sol.tibia;
     if(servo < maxs[RF_TIBIA-1] && servo > mins[RF_TIBIA-1])
         bioloid.setNextPose(RF_TIBIA, servo);
-    else{
-      if (servo >= maxs[RF_TIBIA-1]){
+    else
+    {
+      if (servo >= maxs[RF_TIBIA-1])
+      {
         servo = (maxs[RF_TIBIA-1] - 1);
         bioloid.setNextPose(RF_TIBIA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RF_TIBIA] + 1);
         bioloid.setNextPose(RF_TIBIA, mins[RF_TIBIA-1] + 1);
       }
-        Serial.print("RF_TIBIA FAIL: ");
-        Serial.println(servo);
+      Serial.print("RF_TIBIA FAIL: ");
+      Serial.println(servo);
     }
 
     // right rear leg
@@ -231,44 +220,56 @@ void doIK(){
     servo = 656 - sol.coxa;
     if(servo < maxs[RR_COXA-1] && servo > mins[RR_COXA-1])
         bioloid.setNextPose(RR_COXA, servo);
-    else{
-      if (servo >= maxs[RR_COXA-1]){
+    else
+    {
+      if (servo >= maxs[RR_COXA-1])
+      {
         servo = (maxs[RR_COXA-1] - 1);
         bioloid.setNextPose(RR_COXA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RR_COXA] + 1);
         bioloid.setNextPose(RR_COXA, mins[RR_COXA-1] + 1);
       }
-        Serial.print("RR_COXA FAIL: ");
-        Serial.println(servo);
+      Serial.print("RR_COXA FAIL: ");
+      Serial.println(servo);
     }
     servo = 524 + sol.femur;
     if(servo < maxs[RR_FEMUR-1] && servo > mins[RR_FEMUR-1])
         bioloid.setNextPose(RR_FEMUR, servo);
-    else{
-      if (servo >= maxs[RR_FEMUR-1]){
+    else
+    {
+      if (servo >= maxs[RR_FEMUR-1])
+      {
         servo = (maxs[RR_FEMUR-1] - 1);
         bioloid.setNextPose(RR_FEMUR, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RR_FEMUR] + 1);
         bioloid.setNextPose(RR_FEMUR, mins[RR_FEMUR-1] + 1);
       }
-        Serial.print("RR_FEMUR FAIL: ");
-        Serial.println(servo);
+      Serial.print("RR_FEMUR FAIL: ");
+      Serial.println(servo);
     }
     servo = 354 + sol.tibia;
     if(servo < maxs[RR_TIBIA-1] && servo > mins[RR_TIBIA-1])
         bioloid.setNextPose(RR_TIBIA, servo);
-    else{
-      if (servo >= maxs[RR_TIBIA-1]){
+    else
+    {
+      if (servo >= maxs[RR_TIBIA-1])
+      {
         servo = (maxs[RR_TIBIA-1] - 1);
         bioloid.setNextPose(RR_TIBIA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RR_TIBIA] + 1);
         bioloid.setNextPose(RR_TIBIA, mins[RR_TIBIA-1] + 1);
       }
-        Serial.print("RR_TIBIA FAIL: ");
-        Serial.println(servo);
+      Serial.print("RR_TIBIA FAIL: ");
+      Serial.println(servo);
     }
 
     // left front leg
@@ -278,44 +279,56 @@ void doIK(){
     servo = 656 - sol.coxa;
     if(servo < maxs[LF_COXA-1] && servo > mins[LF_COXA-1])
         bioloid.setNextPose(LF_COXA, servo);
-    else{
-      if (servo >= maxs[LF_COXA-1]){
+    else
+    {
+      if (servo >= maxs[LF_COXA-1])
+      {
         servo = (maxs[LF_COXA-1] - 1);
         bioloid.setNextPose(LF_COXA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LF_COXA] + 1);
         bioloid.setNextPose(LF_COXA, mins[LF_COXA-1] + 1);
       }
-        Serial.print("LF_COXA FAIL: ");
-        Serial.println(servo);
+      Serial.print("LF_COXA FAIL: ");
+      Serial.println(servo);
     }
     servo = 500 - sol.femur;
     if(servo < maxs[LF_FEMUR-1] && servo > mins[LF_FEMUR-1])
         bioloid.setNextPose(LF_FEMUR, servo);
-    else{
-      if (servo >= maxs[LF_FEMUR-1]){
+    else
+    {
+      if (servo >= maxs[LF_FEMUR-1])
+      {
         servo = (maxs[LF_FEMUR-1] - 1);
         bioloid.setNextPose(LF_FEMUR, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LF_FEMUR] + 1);
         bioloid.setNextPose(LF_FEMUR, mins[LF_FEMUR-1] + 1);
       }
-        Serial.print("LF_FEMUR FAIL: ");
-        Serial.println(servo);
+      Serial.print("LF_FEMUR FAIL: ");
+      Serial.println(servo);
     }
     servo = 670 - sol.tibia;
     if(servo < maxs[LF_TIBIA-1] && servo > mins[LF_TIBIA-1])
         bioloid.setNextPose(LF_TIBIA, servo);
-    else{
-      if (servo >= maxs[LF_TIBIA-1]){
+    else
+    {
+      if (servo >= maxs[LF_TIBIA-1])
+      {
         servo = (maxs[LF_TIBIA-1] - 1);
         bioloid.setNextPose(LF_TIBIA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LF_TIBIA] + 1);
         bioloid.setNextPose(LF_TIBIA, mins[LF_TIBIA-1] + 1);
       }
-        Serial.print("LF_TIBIA FAIL: ");
-        Serial.println(servo);
+      Serial.print("LF_TIBIA FAIL: ");
+      Serial.println(servo);
     }
 
     // left rear leg
@@ -325,44 +338,56 @@ void doIK(){
     servo = 368 + sol.coxa;
     if(servo < maxs[LR_COXA-1] && servo > mins[LR_COXA-1])
         bioloid.setNextPose(LR_COXA, servo);
-    else{
-      if (servo >= maxs[LR_COXA-1]){
+    else
+    {
+      if (servo >= maxs[LR_COXA-1])
+      {
         servo = (maxs[LR_COXA-1] - 1);
         bioloid.setNextPose(LR_COXA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LR_COXA] + 1);
         bioloid.setNextPose(LR_COXA, mins[LR_COXA-1] + 1);
       }
-        Serial.print("LR_COXA FAIL: ");
-        Serial.println(servo);
+      Serial.print("LR_COXA FAIL: ");
+      Serial.println(servo);
     }
     servo = 500 - sol.femur;
     if(servo < maxs[LR_FEMUR-1] && servo > mins[LR_FEMUR-1])
         bioloid.setNextPose(LR_FEMUR, servo);
-    else{
-      if (servo >= maxs[LR_FEMUR-1]){
+    else
+    {
+      if (servo >= maxs[LR_FEMUR-1])
+      {
         servo = (maxs[LR_FEMUR-1] - 1);
         bioloid.setNextPose(LR_FEMUR, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LR_FEMUR] + 1);
         bioloid.setNextPose(LR_FEMUR, mins[LR_FEMUR-1] + 1);
       }
-        Serial.print("LR_FEMUR FAIL: ");
-        Serial.println(servo);
+      Serial.print("LR_FEMUR FAIL: ");
+      Serial.println(servo);
     }
     servo = 670 - sol.tibia;
     if(servo < maxs[LR_TIBIA-1] && servo > mins[LR_TIBIA-1])
         bioloid.setNextPose(LR_TIBIA, servo);
-    else{
-      if (servo >= maxs[LR_TIBIA-1]){
+    else
+    {
+      if (servo >= maxs[LR_TIBIA-1])
+      {
         servo = (maxs[LR_TIBIA-1] - 1);
         bioloid.setNextPose(LR_TIBIA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LR_TIBIA] + 1);
         bioloid.setNextPose(LR_TIBIA, mins[LR_TIBIA-1] + 1);
       }
-        Serial.print("LR_TIBIA FAIL: ");
-        Serial.println(servo);
+      Serial.print("LR_TIBIA FAIL: ");
+      Serial.println(servo);
     }
 
     // right middle leg
@@ -372,44 +397,56 @@ void doIK(){
     servo = 512 + sol.coxa;
     if(servo < maxs[RM_COXA-1] && servo > mins[RM_COXA-1])
         bioloid.setNextPose(RM_COXA, servo);
-    else{
-      if (servo >= maxs[RM_COXA-1]){
+    else
+    {
+      if (servo >= maxs[RM_COXA-1])
+      {
         servo = (maxs[RM_COXA-1] - 1);
         bioloid.setNextPose(RM_COXA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RM_COXA] + 1);
         bioloid.setNextPose(RM_COXA, mins[RM_COXA-1] + 1);
       }
-        Serial.print("RM_COXA FAIL: ");
-        Serial.println(servo);
+      Serial.print("RM_COXA FAIL: ");
+      Serial.println(servo);
     }
     servo = 524 + sol.femur;
     if(servo < maxs[RM_FEMUR-1] && servo > mins[RM_FEMUR-1])
         bioloid.setNextPose(RM_FEMUR, servo);
-    else{
-      if (servo >= maxs[RM_FEMUR-1]){
+    else
+    {
+      if (servo >= maxs[RM_FEMUR-1])
+      {
         servo = (maxs[RM_FEMUR-1] - 1);
         bioloid.setNextPose(RM_FEMUR, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RM_FEMUR] + 1);
         bioloid.setNextPose(RM_FEMUR, mins[RM_FEMUR-1] + 1);
       }
-        Serial.print("RM_FEMUR FAIL: ");
-        Serial.println(servo);
+      Serial.print("RM_FEMUR FAIL: ");
+      Serial.println(servo);
     }
     servo = 354 + sol.tibia;
     if(servo < maxs[RM_TIBIA-1] && servo > mins[RM_TIBIA-1])
         bioloid.setNextPose(RM_TIBIA, servo);
-    else{
-      if (servo >= maxs[RM_TIBIA-1]){
+    else
+    {
+      if (servo >= maxs[RM_TIBIA-1])
+      {
         servo = (maxs[RM_TIBIA-1] - 1);
         bioloid.setNextPose(RM_TIBIA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[RM_TIBIA] + 1);
         bioloid.setNextPose(RM_TIBIA, mins[RM_TIBIA-1] + 1);
       }
-        Serial.print("RM_TIBIA FAIL: ");
-        Serial.println(servo);
+      Serial.print("RM_TIBIA FAIL: ");
+      Serial.println(servo);
     }
 
     // left middle leg
@@ -419,46 +456,59 @@ void doIK(){
     servo = 512 - sol.coxa;
     if(servo < maxs[LM_COXA-1] && servo > mins[LM_COXA-1])
         bioloid.setNextPose(LM_COXA, servo);
-    else{
-      if (servo >= maxs[LM_COXA-1]){
+    else
+    {
+      if (servo >= maxs[LM_COXA-1])
+      {
         servo = (maxs[LM_COXA-1] - 1);
         bioloid.setNextPose(LM_COXA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LM_COXA] + 1);
         bioloid.setNextPose(LM_COXA, mins[LM_COXA-1] + 1);
       }
-        Serial.print("LM_COXA FAIL: ");
-        Serial.println(servo);
+      Serial.print("LM_COXA FAIL: ");
+      Serial.println(servo);
     }
     servo = 500 - sol.femur;
     if(servo < maxs[LM_FEMUR-1] && servo > mins[LM_FEMUR-1])
         bioloid.setNextPose(LM_FEMUR, servo);
-    else{
-      if (servo >= maxs[LM_FEMUR-1]){
+    else
+    {
+      if (servo >= maxs[LM_FEMUR-1])
+      {
         servo = (maxs[LM_FEMUR-1] - 1);
         bioloid.setNextPose(LM_FEMUR, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LM_FEMUR] + 1);
         bioloid.setNextPose(LM_FEMUR, mins[LM_FEMUR-1] + 1);
       }
-        Serial.print("LM_FEMUR FAIL: ");
-        Serial.println(servo);
+      Serial.print("LM_FEMUR FAIL: ");
+      Serial.println(servo);
     }
     servo = 670 - sol.tibia;
     if(servo < maxs[LM_TIBIA-1] && servo > mins[LM_TIBIA-1])
         bioloid.setNextPose(LM_TIBIA, servo);
-    else{
-      if (servo >= maxs[LM_TIBIA-1]){
+    else
+    {
+      if (servo >= maxs[LM_TIBIA-1])
+      {
         servo = (maxs[LM_TIBIA-1] - 1);
         bioloid.setNextPose(LM_TIBIA, servo);
-      }else{
+      }
+      else
+      {
         servo = (mins[LM_TIBIA] + 1);
         bioloid.setNextPose(LM_TIBIA, mins[LM_TIBIA-1] + 1);
       }
-        Serial.print("LM_TIBIA FAIL: ");
-        Serial.println(servo);
+      Serial.print("LM_TIBIA FAIL: ");
+      Serial.println(servo);
     }
-    if (((downMove == false) && ( senseGait == 1)) || (senseGait == 0)){
+    if (((downMove == false) && ( senseGait == 1)) || (senseGait == 0))
+    {
     step = (step+1)%stepsInCycle;
     totalSteps ++;
     }

@@ -31,7 +31,8 @@ int multiplier;
 
 void clearGaits(){
   //clear gaits[] for all legs
-  for(int i = 0; i < LEG_COUNT; i++){
+  for(int i = 0; i < LEG_COUNT; i++)
+  {
     gaits[i].x = 0;
     gaits[i].y = 0;
     gaits[i].z = 0;
@@ -39,13 +40,15 @@ void clearGaits(){
   }
 }
 
-void setup(){
+void setup()
+{
   pinMode(0,OUTPUT);
   pinMode(BUZZER, OUTPUT);
   tone(BUZZER, 262, 1000);
 
   // initialize FSR pins
-  for(int x = 0; x < 6; x++){
+  for(int x = 0; x < 6; x++)
+  {
       pinMode(inputs[x], INPUT); //for the Input from the Uno
   }
   // setup IK
@@ -68,43 +71,53 @@ void setup(){
   bioloid.readPose();
   doIK();
   bioloid.interpolateSetup(1000);
-  while(bioloid.interpolating > 0){
+  while(bioloid.interpolating > 0)
+  {
     bioloid.interpolateStep();
     delay(3);
   }
   multiplier = AMBLE_SPEED;
 }
 
-void loop(){
+void loop()
+{
   // take commands
-  if(command.ReadMsgs() > 0){
+  if(command.ReadMsgs() > 0)
+  {
     digitalWrite(0,HIGH-digitalRead(0));
     // select gaits
-    if(command.buttons&BUT_R1){
+    if(command.buttons&BUT_R1)
+    {
       gaitSelect(RIPPLE_SMOOTH);
       multiplier=RIPPLE_SPEED;
     }
-    if(command.buttons&BUT_R2){
+    if(command.buttons&BUT_R2)
+    {
       gaitSelect(AMBLE_SMOOTH);
       multiplier=AMBLE_SPEED;
     }
-    if(command.buttons&BUT_R3){
+    if(command.buttons&BUT_R3)
+    {
       gaitSelect(RIPPLE);
       multiplier=RIPPLE_SPEED;
     }
-    if(command.buttons&BUT_L4){
+    if(command.buttons&BUT_L4)
+    {
       gaitSelect(AMBLE);
       multiplier=AMBLE_SPEED;
     }
-    if(command.buttons&BUT_L5){
+    if(command.buttons&BUT_L5)
+    {
       gaitSelect(MOVEMENT_ROT);
       multiplier=MOVEMENT_SPEED;
     }
-    if(command.buttons&BUT_L6){
+    if(command.buttons&BUT_L6)
+    {
       gaitSelect(MOVEMENT_PLANE);
       multiplier=MOVEMENT_SPEED;
     }
-    if(command.buttons&BUT_RT){
+    if(command.buttons&BUT_RT)
+    {
       //gaitSelect(TRIPOD);
       //multiplier=TOP_SPEED;
       gaitSelect(AMBLE_SMOOTH);
@@ -115,7 +128,8 @@ void loop(){
       bioloid.readPose();
       doIK();
       bioloid.interpolateSetup(1000);
-      while(bioloid.interpolating > 0){
+      while(bioloid.interpolating > 0)
+      {
         bioloid.interpolateStep();
         delay(3);
       }
@@ -124,12 +138,14 @@ void loop(){
       totalSteps = 0;
       step = 0;
     }
-    if(command.buttons&BUT_LT){
+    if(command.buttons&BUT_LT)
+    {
       gaitSelect(SQUARE_GAIT);
       multiplier=SQUARE_SPEED;
     }
     // set movement speed
-    if((command.walkV) > 5 || (command.walkV < -5) ){ //lessened the > 40 parameter
+    if((command.walkV) > 5 || (command.walkV < -5) )
+    { //lessened the > 40 parameter
       Xspeed = (multiplier*command.walkV)/2;
     }
     else
@@ -137,7 +153,8 @@ void loop(){
       Xspeed = 0;
     }
 
-    if((command.walkH) > 5 || (command.walkH < -5) ){ //changed the parameters to -5 < x > 5
+    if((command.walkH) > 5 || (command.walkH < -5) )
+    { //changed the parameters to -5 < x > 5
     Yspeed = (multiplier*command.walkH)/2;
     }
     else
@@ -145,7 +162,8 @@ void loop(){
      Yspeed = 0;
     }
 
-    if((command.lookH) > 5 || (command.lookH < -5) ){ //Same^^^
+    if((command.lookH) > 5 || (command.lookH < -5) )
+    { //Same^^^
     Rspeed = -(command.lookH)/100.0;
     }
     else
@@ -153,7 +171,8 @@ void loop(){
       Rspeed = 0;
     }
 
-    if((command.lookV) > 5 || (command.lookV < -5) ){ //Same^^^
+    if((command.lookV) > 5 || (command.lookV < -5) )
+    { //Same^^^
     Zspeed = -(command.lookV);
     }
     else
@@ -163,7 +182,8 @@ void loop(){
 
 // Use the phoenix code if you want pretty body rotation. :)
 
-   /*if((command.buttons&BUT_RT) > 0){
+   /*if((command.buttons&BUT_RT) > 0)
+   {
       bodyRotY = (((float)command.lookV))/300.0;
       bodyRotZ = ((float)command.lookH)/300.0;
       bodyRotX = ((float)command.walkH)/300.0;
@@ -175,7 +195,8 @@ void loop(){
   }
 
   // if our previous interpolation is complete, recompute the IK
-  if(bioloid.interpolating == 0){
+  if(bioloid.interpolating == 0)
+  {
     doIK();
     bioloid.interpolateSetup(tranTime);
   }

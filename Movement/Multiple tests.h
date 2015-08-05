@@ -210,3 +210,5 @@ bodyRotX -= [initial roll] - [RollIMU];
 bodyRotY -= [initial pitch] - [PitchIMU];
 //convert to radians if necessary
 //depending on the roll/pitch/yaw side, add tan(theta)/2 to the lower and subtract the same to the : maybe in doIK()
+
+-------------------------------------------------------------------------------------------------------------------------------------

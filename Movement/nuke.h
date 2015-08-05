@@ -58,13 +58,12 @@
 /* The buzzer's output pin */
 #define BUZZER         A0
 
-/* The LED's output pin and values */
-#define LED1            1
-
+//how fast the leg goes down
 #define DROP_SPEED 10
 
 /* A leg position request (output of body calcs, input to simple 3dof solver). */
-typedef struct{
+typedef struct
+{
     int x;
     int y;
     int z;
@@ -72,7 +71,8 @@ typedef struct{
 } ik_req_t;
 
 /* Servo ouptut values (output of 3dof leg solver). */
-typedef struct{
+typedef struct
+{
     int coxa;
     int femur;
     int tibia;
