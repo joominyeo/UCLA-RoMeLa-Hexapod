@@ -93,8 +93,10 @@ void loop()
     }
     if(command.buttons&BUT_R2)
     {
-      gaitSelect(AMBLE_SMOOTH);
-      multiplier=AMBLE_SPEED;
+      //gaitSelect(AMBLE_SMOOTH);
+      //multiplier=AMBLE_SPEED;
+      gaitSelect(SQUARE_GAIT);
+      multiplier=SQUARE_SPEED;
     }
     if(command.buttons&BUT_R3)
     {
@@ -140,7 +142,7 @@ void loop()
     }
     if(command.buttons&BUT_LT)
     {
-      gaitSelect(SQUARE_GAIT);
+      gaitSelect(SENSE_GAIT);
       multiplier=SQUARE_SPEED;
     }
     // set movement speed
