@@ -508,6 +508,7 @@ void doIK()
       Serial.println(servo);
     }
     if (((downMove == false) && ( senseGait == 1)) || (senseGait == 0))
+    //if the leg is moving down and the sensing gait is selected OR any other gait is selected, move on to the next step
     {
     step = (step+1)%stepsInCycle;
     totalSteps ++;
