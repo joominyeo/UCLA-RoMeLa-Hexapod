@@ -1,13 +1,14 @@
 // Code for reading analog inputs from FSRs, outputting to serial and piping them to the Arbotix.
 // Used because the Arbotix was having some issues reading analog values.
 
-//#define SERIAL_ON
+#define SERIAL_ON
 
 int senseNum[] = {A0, A2, A3, A5, A1, A4}; // analog pins
 int LEDNum[] = {2, 4, 5, 7, 3, 6}; // digital pins
-int threshold[] = {1, 1, 1, 50, 1, 1}; // threshold for each of the pins
+int threshold[] = {35, 50, 40, 50, 75, 45}; // threshold for each of the pins
 
-char* legs[] = {" Right Front: ", " Right Rear: ", " Left Front: ", " Left Rear: ", " Right Middle: ", " Left Middle: "};
+//char* legs[] = {" Right Front: ", " Right Rear: ", " Left Front: ", " Left Rear: ", " Right Middle: ", " Left Middle: "};
+char* legs[] = {" ", " ", " ", " ", " ", " "};
 
 // Right Front  == 0
 // Right Rear   == 1
@@ -34,8 +35,9 @@ unsigned time = millis();
 
 void loop(){
   // Loop Timer
-  Serial.print("EXEC TIME: "); Serial.print(millis()-time);
-  time = millis();
+  //Serial.print("EXEC TIME: "); 
+  Serial.print(millis());//-time);
+  //time = millis();
 
   //
   for(int x = 0; x < 6; x++){
